@@ -48,21 +48,24 @@ app.get("/callback", async (req, res) => {
     );
   } else {
     try {
+      console.log("fetching");
       const response = await fetch(TOKEN_URL, {
         method: "POST",
+        body: querystring.stringify({
+          code: code,
+          redirect_uri: REDIRECT_URI,
+          grant_type: "authorization_code",
+        }),
         headers: {
           "content-type": "application/x-www-form-urlencoded",
           Authorization:
             "Basic " +
             new Buffer.from(CLIENT_ID + ":" + CLIENT_SECRET).toString("base64"),
         },
-        body: JSON.stringify({
-          code: code,
-          redirect_uri: REDIRECT_URI,
-          grant_type: "authorization_code",
-        }),
       });
+      console.log("success");
       const json = await response.json();
+      console.log("success");
       console.log(json);
     } catch (error) {
       console.error(error.message);
