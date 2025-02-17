@@ -3,6 +3,7 @@
     "@spotify/web-api-ts-sdk": "^1.2.0",
     "billboard-top-100": "^2.6.5",
     "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "typescript": "^5.7.3"
   },
   "name": "billboardapp",
