@@ -2,6 +2,7 @@ const express = require("express");
 const { getChart } = require("billboard-top-100");
 var querystring = require("querystring");
 require("dotenv").config();
+const moment = require("moment");
 
 const app = express();
 const port = 3000;
@@ -16,7 +17,7 @@ const API_BASE_URL = "https://api.spotify.com/v1/";
 
 app.get("/login", (req, res) => {
   var state = "ovXzE45nraCUnDjX";
-  var scope = "user-read-private user-read-email";
+  var scope = "user-read-private user-read-email playlist-modify-private";
 
   res.redirect(
     AUTH_URL +
@@ -44,25 +45,28 @@ app.get("/getChart", async (req, res) => {
     });
   }
 
+  if (!moment(date, "YYYY-MM-DD", true).isValid()) {
+    return res.status(400).send({
+      message: "Improper date format.",
+    });
+  }
+
   console.log(chartName);
   console.log(date);
 
   var songs;
-  try {
-    getChart(chartName, date, (err, chart) => {
-      if (err) {
-        //console.log(err);
-        return res.status(400).send({
-          message: "Error!",
-        });
-      }
-      songs = chart.songs;
-      console.log(chart.songs);
-      res.json(songs);
-    });
-  } catch (e) {
-    console.log(e);
-  }
+
+  getChart(chartName, date, (err, chart) => {
+    if (err) {
+      //console.log(err);
+      return res.status(400).send({
+        message: "Error!",
+      });
+    }
+    songs = chart.songs;
+    console.log(chart.songs);
+    res.json(songs);
+  });
 
   console.log(songs);
 });

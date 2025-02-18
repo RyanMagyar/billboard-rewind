@@ -10,9 +10,10 @@ getChart("hot-mainstream-rock-tracks", "1997-10-16", (err, chart) => {
 listCharts((err, charts) => {
   if (err) console.log(err);
   // array of all charts
-  charts.forEach((chart) => {
+  console.log(charts);
+  /*charts.forEach((chart) => {
     if (chart.name.includes("Rock")) {
       console.log(chart);
     }
-  });
+  });*/
 });
