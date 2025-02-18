@@ -1,4 +1,5 @@
 const express = require("express");
+const { getChart } = require("billboard-top-100");
 var querystring = require("querystring");
 require("dotenv").config();
 
@@ -28,6 +29,42 @@ app.get("/login", (req, res) => {
         state: state,
       })
   );
+});
+
+app.get("/getChart", async (req, res) => {
+  //var chartName = "hot-mainstream-rock-tracks";
+  //var date = "1997-10-16";
+
+  var chartName = req.query.chart;
+  var date = req.query.date;
+
+  if (!chartName || !date) {
+    return res.status(400).send({
+      message: "Missing query params!",
+    });
+  }
+
+  console.log(chartName);
+  console.log(date);
+
+  var songs;
+  try {
+    getChart(chartName, date, (err, chart) => {
+      if (err) {
+        //console.log(err);
+        return res.status(400).send({
+          message: "Error!",
+        });
+      }
+      songs = chart.songs;
+      console.log(chart.songs);
+      res.json(songs);
+    });
+  } catch (e) {
+    console.log(e);
+  }
+
+  console.log(songs);
 });
 
 app.get("/callback", async (req, res) => {
@@ -65,10 +102,18 @@ app.get("/callback", async (req, res) => {
       });
       console.log("success");
       const json = await response.json();
+      const access_token = json.access_token;
+      const refresh_token = json.refresh_token;
+      const expires_in = json.expires_in;
       console.log("success");
       console.log(json);
+      console.log(access_token);
+      console.log(refresh_token);
+      console.log(expires_in);
+      res.redirect("/");
     } catch (error) {
       console.error(error.message);
+      res.redirect("/");
     }
   }
 });
