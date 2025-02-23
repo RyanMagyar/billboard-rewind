@@ -4,6 +4,7 @@ var querystring = require("querystring");
 require("dotenv").config();
 const moment = require("moment");
 var cookieSession = require("cookie-session");
+const cors = require("cors");
 
 const app = express();
 const port = 3000;
@@ -17,12 +18,38 @@ const AUTH_URL = "https://accounts.spotify.com/authorize";
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
 const API_BASE_URL = "https://api.spotify.com/v1/";
 
+app.set("trust proxy", 1);
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true, //
+  })
+);
+
 app.use(
   cookieSession({
     name: "session",
     secret: SECRET,
+    maxAge: 24 * 60 * 60 * 1000,
+    secure: false,
+    httpOnly: true,
   })
 );
+
+app.get("/debug", (req, res) => {
+  console.log(req.session);
+  res.json(req.session);
+});
+
+app.get("/token", (req, res) => {
+  const token = req.session.access_token;
+  if (token) {
+    res.json({ access_token: token });
+  } else {
+    res.status(401).json({ message: "no access token found" });
+  }
+});
 
 app.get("/login", (req, res) => {
   var state = "ovXzE45nraCUnDjX";
@@ -118,6 +145,11 @@ app.get("/callback", async (req, res) => {
       const access_token = json.access_token;
       const refresh_token = json.refresh_token;
       const expires_in = json.expires_in;
+
+      req.session.access_token = access_token;
+      req.session.refresh_token = refresh_token;
+      req.expires_at = Date.now() + expires_in * 1000;
+
       console.log("success");
       console.log(json);
       console.log(access_token);
