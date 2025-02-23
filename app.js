@@ -68,6 +68,55 @@ app.get("/login", (req, res) => {
   );
 });
 
+app.get("/refresh_token", async (req, res) => {
+  try {
+    const refresh_token = req.session.refresh_token;
+    console.log(refresh_token);
+    if (!refresh_token) {
+      console.log("Tried refreshing token without refresh token");
+      res.redirect("/");
+    }
+
+    if (Date.now() > req.session.expires_at) {
+      console.log("Refreshing Token");
+      console.log(refresh_token);
+      const response = await fetch(TOKEN_URL, {
+        method: "POST",
+        body: querystring.stringify({
+          grant_type: "refresh_token",
+          refresh_token: refresh_token,
+        }),
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          Authorization:
+            "Basic " +
+            new Buffer.from(CLIENT_ID + ":" + CLIENT_SECRET).toString("base64"),
+        },
+      });
+      console.log("refresh success");
+      const json = await response.json();
+      const access_token = json.access_token;
+      const expires_in = json.expires_in;
+      console.log(json);
+      console.log(access_token);
+      console.log(refresh_token);
+      console.log(expires_in);
+
+      req.session.access_token = access_token;
+      req.session.refresh_token = refresh_token;
+      req.session.expires_at = Date.now() + expires_in * 1000;
+
+      res.redirect("/");
+    } else {
+      console.log("Token not expired yet");
+      res.status(403).json({ message: "Token not expired yet" });
+    }
+  } catch (error) {
+    console.error("Error refreshing token:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 app.get("/getChart", async (req, res) => {
   //var chartName = "hot-mainstream-rock-tracks";
   //var date = "1997-10-16";
@@ -148,7 +197,7 @@ app.get("/callback", async (req, res) => {
 
       req.session.access_token = access_token;
       req.session.refresh_token = refresh_token;
-      req.expires_at = Date.now() + expires_in * 1000;
+      req.session.expires_at = Date.now() + expires_in * 1000;
 
       console.log("success");
       console.log(json);
