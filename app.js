@@ -3,17 +3,26 @@ const { getChart } = require("billboard-top-100");
 var querystring = require("querystring");
 require("dotenv").config();
 const moment = require("moment");
+var cookieSession = require("cookie-session");
 
 const app = express();
 const port = 3000;
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const SECRET = process.env.SECRET;
 const REDIRECT_URI = "http://localhost:3000/callback";
 
 const AUTH_URL = "https://accounts.spotify.com/authorize";
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
 const API_BASE_URL = "https://api.spotify.com/v1/";
+
+app.use(
+  cookieSession({
+    name: "session",
+    secret: SECRET,
+  })
+);
 
 app.get("/login", (req, res) => {
   var state = "ovXzE45nraCUnDjX";
