@@ -79,7 +79,7 @@ async function createPlaylist(uriArray, chart, week, token) {
 // add refresh token logic
 // add failed search retries i.e wokring with '/' e.g Beth/Detroit Rock City, collab artists
 
-async function searchTracks(songArray, token) {
+async function searchTracks(songArray, token, year) {
   var uriArray = [];
   var failedArray = [];
   for (let i = 0; i < songArray.length; i++) {
@@ -87,11 +87,82 @@ async function searchTracks(songArray, token) {
     var track = songArray[i].title.replace(/\s*\(.*?\)\s*/g, "").trim();
     var rank = songArray[i].rank;
 
-    const response = await fetchWebApi(
-      `v1/search?q=track:${track} artist:${artist}&type=track&market=US&limit=1&offset=0`,
+    var response = await fetchWebApi(
+      `v1/search?q=track:${track} artist:${artist} year:${year - 1}-${
+        Number(year) + 1
+      }&type=track&market=US&limit=1&offset=0`,
       "GET",
       token
     );
+
+    //items array exists but is empty
+    // try searching without the year
+    if (response.tracks.items && !response.tracks.items.length) {
+      response = await fetchWebApi(
+        `v1/search?q=track:${track} artist:${artist}&type=track&market=US&limit=1&offset=0`,
+        "GET",
+        token
+      );
+    }
+
+    // Track name has "/" in try searching the first part
+    if (
+      response.tracks.items &&
+      !response.tracks.items.length &&
+      track.includes("/")
+    ) {
+      const splitTrack = track.split("/");
+      response = await fetchWebApi(
+        `v1/search?q=track:${splitTrack[0]} artist:${artist}&type=track&market=US&limit=1&offset=0`,
+        "GET",
+        token
+      );
+    }
+
+    // if artist has "and" in it try searching each artist
+    if (
+      response.tracks.items &&
+      !response.tracks.items.length &&
+      artist.includes("And")
+    ) {
+      const splitArtist = artist.split(" And ");
+      response = await fetchWebApi(
+        `v1/search?q=track:${track} artist:${splitArtist[0]}&type=track&market=US&limit=1&offset=0`,
+        "GET",
+        token
+      );
+
+      if (response.tracks.items && !response.tracks.items.length) {
+        response = await fetchWebApi(
+          `v1/search?q=track:${track} artist:${splitArtist[1]}&type=track&market=US&limit=1&offset=0`,
+          "GET",
+          token
+        );
+      }
+    }
+
+    // artist has "Featuring" try removing
+    if (
+      response.tracks.items &&
+      !response.tracks.items.length &&
+      artist.includes("Featuring")
+    ) {
+      const splitArtist = artist.split("Featuring");
+      response = await fetchWebApi(
+        `v1/search?q=track:${track} artist:${splitArtist[0]}&type=track&market=US&limit=1&offset=0`,
+        "GET",
+        token
+      );
+
+      if (response.tracks.items && !response.tracks.items.length) {
+        response = await fetchWebApi(
+          `v1/search?q=track:${track} artist:${splitArtist[1]}&type=track&market=US&limit=1&offset=0`,
+          "GET",
+          token
+        );
+      }
+    }
+
     try {
       uriArray.push(response.tracks.items[0].uri);
     } catch (error) {
@@ -143,13 +214,13 @@ app.get("/login", (req, res) => {
   );
 });
 
-app.get("/refresh_token", async (req, res) => {
+app.get("/refreshToken", async (req, res) => {
   try {
     const refresh_token = req.session.refresh_token;
     console.log(refresh_token);
     if (!refresh_token) {
       console.log("Tried refreshing token without refresh token");
-      res.redirect("/");
+      res.redirect("/login");
     }
 
     if (Date.now() > req.session.expires_at) {
@@ -248,13 +319,25 @@ app.get("/getChart", async (req, res) => {
 });
 
 app.post("/createPlaylist", async (req, res) => {
+  if (!req.session.access_token) {
+    console.log("/createPlaylist with no access token");
+    res.redirect("/login");
+  }
+
+  if (Date.now() > req.session.expires_at) {
+    console.log("/createPLaylist refreshing token");
+    res.redirect("/refreshToken");
+  }
+
   const chart = req.query.chart;
   const week = req.query.week;
   const songArray = req.body;
   const token = req.session.access_token;
+  const dateArray = week.split("-");
+  const year = dateArray[2];
   //console.log(songArray);
 
-  const songsObj = await searchTracks(songArray, token);
+  const songsObj = await searchTracks(songArray, token, year);
   const uriArray = songsObj.uriArray;
   const failedArray = songsObj.failedArray;
 
