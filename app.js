@@ -5,7 +5,6 @@ require("dotenv").config();
 const moment = require("moment");
 var cookieSession = require("cookie-session");
 const cors = require("cors");
-const { fail } = require("assert");
 
 const app = express();
 const port = 3000;
@@ -14,6 +13,9 @@ const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const SECRET = process.env.SECRET;
 const REDIRECT_URI = "http://localhost:3000/callback";
+
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
+const ACCESS_TOKEN = process.env.ACCESS_TOKEN;
 
 const AUTH_URL = "https://accounts.spotify.com/authorize";
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
@@ -74,10 +76,13 @@ async function createPlaylist(uriArray, chart, week, token) {
   return playlist;
 }
 
+// add refresh token logic
+// add failed search retries i.e wokring with '/' e.g Beth/Detroit Rock City, collab artists
+
 async function searchTracks(songArray, token) {
   var uriArray = [];
   var failedArray = [];
-  for (let i = 0; i < songArray.length - 99; i++) {
+  for (let i = 0; i < songArray.length; i++) {
     var artist = songArray[i].artist;
     var track = songArray[i].title.replace(/\s*\(.*?\)\s*/g, "").trim();
     var rank = songArray[i].rank;
@@ -105,6 +110,9 @@ async function searchTracks(songArray, token) {
 }
 
 app.get("/debug", (req, res) => {
+  req.session.access_token = ACCESS_TOKEN;
+  req.session.refresh_token = REFRESH_TOKEN;
+  req.session.expires_at = Date.now() + 3600 * 1000;
   console.log(req.session);
   res.json(req.session);
 });
@@ -188,13 +196,13 @@ app.get("/getChart", async (req, res) => {
   //var chartName = "hot-mainstream-rock-tracks";
   //var date = "1997-10-16";
   const genres = {
-    rock: "hot-mainstream-rock-tracks",
-    rap: "r-b-hip-hop-songs",
-    hot: "hot-100",
-    alt: "alternative-airplay",
-    pop: "adult-contemporary",
-    country: "country-songs",
-    latin: "latin-songs",
+    Rock: "hot-mainstream-rock-tracks",
+    Rap: "r-b-hip-hop-songs",
+    Hot: "hot-100",
+    Alt: "alternative-airplay",
+    Pop: "adult-contemporary",
+    Country: "country-songs",
+    Latin: "latin-songs",
   };
 
   var chartName = req.query.chart;
