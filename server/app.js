@@ -121,11 +121,17 @@ async function searchTracks(songArray, token, year) {
 
     // if artist has "and" in it try searching each artist
     if (
-      response.tracks.items &&
-      !response.tracks.items.length &&
-      artist.includes("And")
+      (response.tracks.items &&
+        !response.tracks.items.length &&
+        artist.includes("And")) ||
+      artist.includes("With")
     ) {
-      const splitArtist = artist.split(" And ");
+      var splitArtist;
+      if (artist.includes("And")) {
+        splitArtist = artist.split(" And ");
+      } else if (artist.includes("With")) {
+        splitArtist = artist.split(" With ");
+      }
       response = await fetchWebApi(
         `v1/search?q=track:${track} artist:${splitArtist[0]}&type=track&market=US&limit=1&offset=0`,
         "GET",
