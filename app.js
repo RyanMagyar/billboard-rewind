@@ -120,6 +120,15 @@ app.get("/refresh_token", async (req, res) => {
 app.get("/getChart", async (req, res) => {
   //var chartName = "hot-mainstream-rock-tracks";
   //var date = "1997-10-16";
+  const genres = {
+    rock: "hot-mainstream-rock-tracks",
+    rap: "r-b-hip-hop-songs",
+    hot: "hot-100",
+    alt: "alternative-airplay",
+    pop: "adult-contemporary",
+    country: "country-songs",
+    latin: "latin-songs",
+  };
 
   var chartName = req.query.chart;
   var date = req.query.date;
@@ -130,18 +139,26 @@ app.get("/getChart", async (req, res) => {
     });
   }
 
+  if (!(chartName in genres)) {
+    return res.status(400).send({
+      message: "Improper chart name.",
+    });
+  }
+
+  const chartUrl = genres[chartName];
+
   if (!moment(date, "YYYY-MM-DD", true).isValid()) {
     return res.status(400).send({
       message: "Improper date format.",
     });
   }
 
-  console.log(chartName);
+  console.log(chartUrl);
   console.log(date);
 
   var songs;
 
-  getChart(chartName, date, (err, chart) => {
+  getChart(chartUrl, date, (err, chart) => {
     if (err) {
       //console.log(err);
       return res.status(400).send({
@@ -150,10 +167,9 @@ app.get("/getChart", async (req, res) => {
     }
     songs = chart.songs;
     console.log(chart.songs);
+    console.log("Week of " + chart.week);
     res.json(songs);
   });
-
-  console.log(songs);
 });
 
 app.get("/callback", async (req, res) => {
