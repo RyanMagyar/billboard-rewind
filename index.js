@@ -548,6 +548,7 @@ async function searchTracks() {
     try {
       uriArray.push(response.tracks.items[0].uri);
     } catch (error) {
+      console.log(response);
       console.log(
         "Couldn't add track: " + track + " artist: " + artist + " rank: " + rank
       );

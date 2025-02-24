@@ -5,6 +5,7 @@ require("dotenv").config();
 const moment = require("moment");
 var cookieSession = require("cookie-session");
 const cors = require("cors");
+const { fail } = require("assert");
 
 const app = express();
 const port = 3000;
@@ -19,6 +20,8 @@ const TOKEN_URL = "https://accounts.spotify.com/api/token";
 const API_BASE_URL = "https://api.spotify.com/v1/";
 
 app.set("trust proxy", 1);
+
+app.use(express.json());
 
 app.use(
   cors({
@@ -36,6 +39,70 @@ app.use(
     httpOnly: true,
   })
 );
+
+async function fetchWebApi(endpoint, method, token, body) {
+  const res = await fetch(`https://api.spotify.com/${endpoint}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    method,
+    body: JSON.stringify(body),
+  });
+  return await res.json();
+}
+
+async function createPlaylist(uriArray, chart, week, token) {
+  const { id: user_id } = await fetchWebApi("v1/me", "GET", token);
+
+  const playlist = await fetchWebApi(
+    `v1/users/${user_id}/playlists`,
+    "POST",
+    token,
+    {
+      name: "Top " + chart + " Tracks " + week,
+      description: "Playlist created by Billboard rewind",
+      public: false,
+    }
+  );
+
+  await fetchWebApi(
+    `v1/playlists/${playlist.id}/tracks?uris=${uriArray.join(",")}`,
+    "POST",
+    token
+  );
+
+  return playlist;
+}
+
+async function searchTracks(songArray, token) {
+  var uriArray = [];
+  var failedArray = [];
+  for (let i = 0; i < songArray.length - 99; i++) {
+    var artist = songArray[i].artist;
+    var track = songArray[i].title.replace(/\s*\(.*?\)\s*/g, "").trim();
+    var rank = songArray[i].rank;
+
+    const response = await fetchWebApi(
+      `v1/search?q=track:${track} artist:${artist}&type=track&market=US&limit=1&offset=0`,
+      "GET",
+      token
+    );
+    try {
+      uriArray.push(response.tracks.items[0].uri);
+    } catch (error) {
+      failedArray.push({ track: track, artist: artist, rank: rank });
+      console.log(response);
+      console.log(
+        "Couldn't add track: " + track + " artist: " + artist + " rank: " + rank
+      );
+    }
+  }
+
+  return {
+    uriArray: uriArray,
+    failedArray: failedArray,
+  };
+}
 
 app.get("/debug", (req, res) => {
   console.log(req.session);
@@ -170,6 +237,22 @@ app.get("/getChart", async (req, res) => {
     console.log("Week of " + chart.week);
     res.json(songs);
   });
+});
+
+app.post("/createPlaylist", async (req, res) => {
+  const chart = req.query.chart;
+  const week = req.query.week;
+  const songArray = req.body;
+  const token = req.session.access_token;
+  //console.log(songArray);
+
+  const songsObj = await searchTracks(songArray, token);
+  const uriArray = songsObj.uriArray;
+  const failedArray = songsObj.failedArray;
+
+  const createdPlaylist = await createPlaylist(uriArray, chart, week, token);
+
+  res.json({ playlist: createdPlaylist, failedArray: failedArray });
 });
 
 app.get("/callback", async (req, res) => {
