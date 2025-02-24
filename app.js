@@ -183,7 +183,7 @@ async function searchTracks(songArray, token, year) {
 app.get("/debug", (req, res) => {
   req.session.access_token = ACCESS_TOKEN;
   req.session.refresh_token = REFRESH_TOKEN;
-  req.session.expires_at = Date.now() + 3600 * 1000;
+  req.session.expires_at = Date.now() + 10 * 1000;
   console.log(req.session);
   res.json(req.session);
 });
@@ -213,6 +213,58 @@ app.get("/login", (req, res) => {
       })
   );
 });
+
+async function refreshToken(req) {
+  try {
+    const refresh_token = req.session.refresh_token;
+    console.log(refresh_token);
+    if (!refresh_token) {
+      console.log("Tried refreshing token without refresh token");
+      return 402;
+      res.redirect("/login");
+    }
+
+    if (Date.now() > req.session.expires_at) {
+      console.log("Refreshing Token");
+      console.log(refresh_token);
+      const response = await fetch(TOKEN_URL, {
+        method: "POST",
+        body: querystring.stringify({
+          grant_type: "refresh_token",
+          refresh_token: refresh_token,
+        }),
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          Authorization:
+            "Basic " +
+            new Buffer.from(CLIENT_ID + ":" + CLIENT_SECRET).toString("base64"),
+        },
+      });
+      console.log("refresh success");
+      const json = await response.json();
+      const access_token = json.access_token;
+      const expires_in = json.expires_in;
+      console.log(json);
+      console.log(access_token);
+      console.log(refresh_token);
+      console.log(expires_in);
+
+      req.session.access_token = access_token;
+      req.session.refresh_token = refresh_token;
+      req.session.expires_at = Date.now() + expires_in * 1000;
+
+      return 200;
+    } else {
+      console.log("Token not expired yet");
+      return 403;
+      res.status(403).json({ message: "Token not expired yet" });
+    }
+  } catch (error) {
+    console.error("Error refreshing token:", error);
+    return 500;
+    res.status(500).send("Internal Server Error");
+  }
+}
 
 app.get("/refreshToken", async (req, res) => {
   try {
@@ -252,7 +304,7 @@ app.get("/refreshToken", async (req, res) => {
       req.session.refresh_token = refresh_token;
       req.session.expires_at = Date.now() + expires_in * 1000;
 
-      res.redirect("/");
+      res.redirect("/createPlaylist");
     } else {
       console.log("Token not expired yet");
       res.status(403).json({ message: "Token not expired yet" });
@@ -321,13 +373,21 @@ app.get("/getChart", async (req, res) => {
 app.post("/createPlaylist", async (req, res) => {
   if (!req.session.access_token) {
     console.log("/createPlaylist with no access token");
-    res.redirect("/login");
+    return res.redirect("/login");
   }
 
   if (Date.now() > req.session.expires_at) {
     console.log("/createPLaylist refreshing token");
-    res.redirect("/refreshToken");
+    const tokenRes = await refreshToken(req);
+    if (tokenRes === 402) {
+      return res.redirect("/login");
+    } else if (tokenRes === 500) {
+      return res.status(500).send("Internal Server Error");
+    }
+    //res.redirect("/refreshToken");
   }
+
+  console.log("RESPONSE");
 
   const chart = req.query.chart;
   const week = req.query.week;
@@ -337,6 +397,7 @@ app.post("/createPlaylist", async (req, res) => {
   const year = dateArray[2];
   //console.log(songArray);
 
+  console.log("Searching Songs");
   const songsObj = await searchTracks(songArray, token, year);
   const uriArray = songsObj.uriArray;
   const failedArray = songsObj.failedArray;
