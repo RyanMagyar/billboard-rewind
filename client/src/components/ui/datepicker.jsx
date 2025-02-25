@@ -1,6 +1,14 @@
 /* eslint-disable react/prop-types */
 import * as React from "react";
-import { format, setMonth, getMonth, getYear, setYear } from "date-fns";
+import {
+  format,
+  setMonth,
+  getMonth,
+  getYear,
+  setYear,
+  addMonths,
+  subMonths,
+} from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -21,6 +29,9 @@ import {
 
 export function DatePicker({ startYear, endYear, selectedDate, onDateChange }) {
   const [date, setDate] = React.useState(selectedDate || new Date());
+  const [visibleMonth, setVisibleMonth] = React.useState(
+    selectedDate || new Date()
+  );
   const months = [
     "January",
     "February",
@@ -42,13 +53,21 @@ export function DatePicker({ startYear, endYear, selectedDate, onDateChange }) {
   );
 
   const handleMonthChange = (month) => {
-    const newDate = setMonth(date, months.indexOf(month));
-    setDate(newDate);
+    const newVisibleMonth = setMonth(visibleMonth, months.indexOf(month));
+    setVisibleMonth(newVisibleMonth);
   };
 
   const handleYearChange = (year) => {
-    const newDate = setYear(date, parseInt(year));
-    setDate(newDate);
+    const newVisibleMonth = setYear(visibleMonth, parseInt(year));
+    setVisibleMonth(newVisibleMonth);
+  };
+
+  const handlePrevMonth = () => {
+    setVisibleMonth((prev) => subMonths(prev, 1));
+  };
+
+  const handleNextMonth = () => {
+    setVisibleMonth((prev) => addMonths(prev, 1));
   };
 
   React.useEffect(() => {
@@ -76,7 +95,7 @@ export function DatePicker({ startYear, endYear, selectedDate, onDateChange }) {
         <div className="flex justify-between p-2">
           <Select
             onValueChange={handleMonthChange}
-            value={months[getMonth(date)]}
+            value={months[getMonth(visibleMonth)]}
           >
             <SelectTrigger className="w-[110px]">
               <SelectValue placeholder="Month" />
@@ -91,7 +110,7 @@ export function DatePicker({ startYear, endYear, selectedDate, onDateChange }) {
           </Select>
           <Select
             onValueChange={handleYearChange}
-            value={getYear(date).toString()}
+            value={getYear(visibleMonth).toString()}
           >
             <SelectTrigger className="w-[110px]">
               <SelectValue placeholder="Year" />
@@ -110,7 +129,10 @@ export function DatePicker({ startYear, endYear, selectedDate, onDateChange }) {
           selected={date}
           onSelect={(newDate) => setDate(newDate)}
           initialFocus
-          month={date}
+          month={visibleMonth}
+          onMonthChange={setVisibleMonth}
+          onPrevMonth={handlePrevMonth}
+          onNextMonth={handleNextMonth}
         />
       </PopoverContent>
     </Popover>

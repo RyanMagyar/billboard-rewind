@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "./components/ui/button";
 import { DatePicker } from "./components/ui/datepicker";
+import { format } from "date-fns";
 
 function App() {
   //const [count, setCount] = useState(0);
@@ -20,7 +21,9 @@ function App() {
         />
         <div>
           Selected Date:{" "}
-          {selectedDate ? selectedDate.toDateString() : "No date selected"}
+          {selectedDate
+            ? format(selectedDate, "yyyy-MM-dd")
+            : "No date selected"}
         </div>
       </div>
     </>
