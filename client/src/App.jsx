@@ -75,10 +75,13 @@ function App() {
 
   return (
     <>
-      <div className="max-w-[50rem] mb-12 mx-auto lg:mb20">
-        <h1 className="text-[2.5rem] font-semibold text-center">
+      <div className="flex items-center justify-center  max-width mb-12 mx-auto lg:mb20">
+        <h1 className="flex-1 text-[2.5rem] font-semibold text-center">
           BillBoard Rewind
         </h1>
+        <a className="m-2 absolute right-0" href="http://localhost:3000/login">
+          <Button className="w-[100px]">Login</Button>
+        </a>
       </div>
       <div className="flex flex-col items-center mx-auto w-[500px] space-y-4">
         <div className="flex w-[500px] justify-around">
@@ -110,6 +113,11 @@ function App() {
         </div>
       </div>
       <div className="w-[800px] mx-auto">
+        <div className="flex justify-end">
+          <a href="http://localhost:3000/login">
+            <Button>Create Playlist</Button>
+          </a>
+        </div>
         <Table>
           <TableCaption>
             {chart} chart for {format(selectedDate, "dd-MM-yyyy")}

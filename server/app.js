@@ -461,10 +461,10 @@ app.get("/callback", async (req, res) => {
       console.log(access_token);
       console.log(refresh_token);
       console.log(expires_in);
-      res.redirect("/");
+      res.redirect("http://localhost:5173/");
     } catch (error) {
       console.error(error.message);
-      res.redirect("/");
+      res.redirect("http://localhost:5173/");
     }
   }
 });
