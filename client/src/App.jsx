@@ -3,15 +3,25 @@ import { Button } from "./components/ui/button";
 import { DatePicker } from "./components/ui/datepicker";
 
 function App() {
-  const [count, setCount] = useState(0);
+  //const [count, setCount] = useState(0);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   return (
     <>
-      <div className="mx-auto w-[200px]">
-        <Button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+      <div className="mx-auto w-[300px] space-y-4">
+        <Button onClick={() => console.log("Selected Date:", selectedDate)}>
+          Log Selected Date
         </Button>
-        <DatePicker startYear={1958} endYear={2025} />
+        <DatePicker
+          startYear={1958}
+          endYear={2025}
+          selectedDate={selectedDate}
+          onDateChange={setSelectedDate}
+        />
+        <div>
+          Selected Date:{" "}
+          {selectedDate ? selectedDate.toDateString() : "No date selected"}
+        </div>
       </div>
     </>
   );

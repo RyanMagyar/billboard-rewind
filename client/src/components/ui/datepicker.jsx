@@ -19,8 +19,8 @@ import {
   SelectValue,
 } from "./select";
 
-export function DatePicker({ startYear, endYear }) {
-  const [date, setDate] = React.useState(new Date());
+export function DatePicker({ startYear, endYear, selectedDate, onDateChange }) {
+  const [date, setDate] = React.useState(selectedDate || new Date());
   const months = [
     "January",
     "February",
@@ -32,6 +32,7 @@ export function DatePicker({ startYear, endYear }) {
     "August",
     "September",
     "October",
+    "November",
     "December",
   ];
 
@@ -49,6 +50,11 @@ export function DatePicker({ startYear, endYear }) {
     const newDate = setYear(date, parseInt(year));
     setDate(newDate);
   };
+
+  React.useEffect(() => {
+    // Update parent state whenever the local state changes
+    onDateChange(date);
+  }, [date, onDateChange]);
   //console.log(years);
   //console.log(startYear);
 
@@ -102,7 +108,7 @@ export function DatePicker({ startYear, endYear }) {
         <Calendar
           mode="single"
           selected={date}
-          onSelect={setDate}
+          onSelect={(newDate) => setDate(newDate)}
           initialFocus
           month={date}
         />
