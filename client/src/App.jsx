@@ -39,6 +39,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [playlistIsLoading, setPlaylistIsLoading] = useState(false);
   const [playlistUrl, setPlaylistUrl] = useState();
+  const [songsNotFound, setSongsNotFound] = useState();
 
   const handleChartChange = (chart) => {
     setChart(chart);
@@ -101,6 +102,7 @@ function App() {
       const data = await response.json();
       console.log("Playlist Data:", data);
       setPlaylistUrl(data.playlist.external_urls.spotify);
+      setSongsNotFound(data.failedArray);
     } catch (error) {
       console.error("Error fetching playlist data:", error);
     } finally {
@@ -155,8 +157,34 @@ function App() {
             </a>
           ) : null}
         </div>
+        <div>
+          {songsNotFound ? (
+            <Table>
+              <TableCaption>Songs Spotify couldn&apos;t find</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[50px] text-bold text-left">
+                    Rank
+                  </TableHead>
+                  <TableHead className="text-bold">Title</TableHead>
+                  <TableHead className="text-bold">Artist</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {songsNotFound &&
+                  songsNotFound.map((song) => (
+                    <TableRow key={song.rank}>
+                      <TableCell className="font-bold">{song.rank}</TableCell>
+                      <TableCell>{song.track}</TableCell>
+                      <TableCell>{song.artist}</TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          ) : null}
+        </div>
       </div>
-      <div className="w-[800px] mx-auto">
+      <div className="w-[800px] mx-auto mb-10">
         <div className="flex justify-end">
           <Button onClick={createSpotifyPlaylist}>Create Playlist</Button>
         </div>
