@@ -83,7 +83,7 @@ function App() {
     try {
       const response = await fetch(
         `http://localhost:3000/createPlaylist?date=${encodeURIComponent(
-          format(selectedDate, "dd-MM-yyyy")
+          format(selectedDate, "MM-dd-yyyy")
         )}&chart=${encodeURIComponent(chart)}`,
         {
           method: "POST",
@@ -161,6 +161,7 @@ function App() {
           {songsNotFound ? (
             <Table>
               <TableCaption>Songs Spotify couldn&apos;t find</TableCaption>
+
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[50px] text-bold text-left">
@@ -168,8 +169,10 @@ function App() {
                   </TableHead>
                   <TableHead className="text-bold">Title</TableHead>
                   <TableHead className="text-bold">Artist</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
+
               <TableBody>
                 {songsNotFound &&
                   songsNotFound.map((song) => (

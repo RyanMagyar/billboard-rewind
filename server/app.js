@@ -82,13 +82,13 @@ async function createPlaylist(uriArray, chart, date, token) {
 async function searchTracks(songArray, token, year) {
   var uriArray = [];
   var failedArray = [];
-  console.log("Songs array length: " + songArray.length);
+  //console.log("Songs array length: " + songArray.length);
   for (let i = 0; i < songArray.length; i++) {
     var artist = songArray[i].artist;
     var track = songArray[i].title.replace(/\s*\(.*?\)\s*/g, "").trim();
     var rank = songArray[i].rank;
 
-    console.log("Searching: " + track);
+    //console.log("Searching: " + track);
     var response = await fetchWebApi(
       `v1/search?q=track:${track} artist:${artist} year:${year - 1}-${
         Number(year) + 1
@@ -127,7 +127,8 @@ async function searchTracks(songArray, token, year) {
         !response.tracks.items.length &&
         artist.includes("And")) ||
       artist.includes("With") ||
-      artist.includes(" x ")
+      artist.includes(" x ") ||
+      artist.includes("Starring")
     ) {
       var splitArtist;
       if (artist.includes("And")) {
@@ -136,6 +137,8 @@ async function searchTracks(songArray, token, year) {
         splitArtist = artist.split(" With ");
       } else if (artist.includes(" x ")) {
         splitArtist = artist.split(" x ");
+      } else if (artist.includes(" Starring ")) {
+        splitArtist = artist.split(" Starring ");
       }
       response = await fetchWebApi(
         `v1/search?q=track:${track} artist:${splitArtist[0]}&type=track&market=US&limit=1&offset=0`,
@@ -178,7 +181,7 @@ async function searchTracks(songArray, token, year) {
       uriArray.push(response.tracks.items[0].uri);
     } catch (error) {
       failedArray.push({ track: track, artist: artist, rank: rank });
-      console.log(response);
+      //console.log(response);
       console.log(
         "Couldn't add track: " + track + " artist: " + artist + " rank: " + rank
       );
@@ -255,7 +258,7 @@ async function refreshToken(req) {
       const json = await response.json();
       const access_token = json.access_token;
       const expires_in = json.expires_in;
-      console.log(json);
+      //console.log(json);
       console.log(access_token);
       console.log(refresh_token);
       console.log(expires_in);
@@ -277,6 +280,7 @@ async function refreshToken(req) {
   }
 }
 
+/*
 app.get("/refreshToken", async (req, res) => {
   try {
     const refresh_token = req.session.refresh_token;
@@ -325,6 +329,7 @@ app.get("/refreshToken", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+*/
 
 app.get("/getChart", async (req, res) => {
   //var chartName = "hot-mainstream-rock-tracks";
@@ -411,7 +416,7 @@ app.post("/createPlaylist", async (req, res) => {
   console.log("Searching Songs");
   console.log("Chart: " + chart);
   console.log("Date: " + date);
-  console.log("Body: " + JSON.stringify(req.body, null, 2));
+  //console.log("Body: " + JSON.stringify(req.body, null, 2));
   const songsObj = await searchTracks(songArray, token, year);
   console.log("Returned from searchTracks");
   const uriArray = songsObj.uriArray;
