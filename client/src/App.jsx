@@ -31,6 +31,16 @@ const charts = {
   Latin: "Latin",
 };
 
+const chartDates = {
+  Rock: "1981-03-21",
+  Rap: "1958-10-20",
+  Hot: "1958-08-04",
+  Alt: "1988-09-10",
+  Pop: "1961-07-17",
+  Country: "1958-10-20",
+  Latin: "1986-20-09",
+};
+
 function App() {
   //const [count, setCount] = useState(0);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -43,6 +53,10 @@ function App() {
 
   const handleChartChange = (chart) => {
     setChart(chart);
+
+    if (selectedDate < new Date(chartDates[chart])) {
+      setSelectedDate(new Date(chartDates[chart]));
+    }
   };
 
   const getChartData = async () => {
@@ -135,10 +149,11 @@ function App() {
             </SelectContent>
           </Select>
           <DatePicker
-            startYear={1958}
+            startYear={chart ? Number(chartDates[chart].split("-")[0]) : 1958}
             endYear={2025}
             selectedDate={selectedDate}
             onDateChange={setSelectedDate}
+            fromDate={chartDates[chart]}
           />
         </div>
         <Button onClick={getChartData}>Get Chart Data</Button>

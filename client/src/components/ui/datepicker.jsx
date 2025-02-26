@@ -27,7 +27,13 @@ import {
   SelectValue,
 } from "./select";
 
-export function DatePicker({ startYear, endYear, selectedDate, onDateChange }) {
+export function DatePicker({
+  startYear,
+  endYear,
+  selectedDate,
+  onDateChange,
+  fromDate,
+}) {
   const [date, setDate] = React.useState(selectedDate || new Date());
   const [visibleMonth, setVisibleMonth] = React.useState(
     selectedDate || new Date()
@@ -69,6 +75,14 @@ export function DatePicker({ startYear, endYear, selectedDate, onDateChange }) {
   const handleNextMonth = () => {
     setVisibleMonth((prev) => addMonths(prev, 1));
   };
+
+  React.useEffect(() => {
+    // 🔥 Update date if selectedDate prop changes
+    if (selectedDate && selectedDate.getTime() !== date.getTime()) {
+      setDate(selectedDate);
+      setVisibleMonth(selectedDate);
+    }
+  }, [selectedDate]);
 
   React.useEffect(() => {
     // Update parent state whenever the local state changes
@@ -133,6 +147,7 @@ export function DatePicker({ startYear, endYear, selectedDate, onDateChange }) {
           onMonthChange={setVisibleMonth}
           onPrevMonth={handlePrevMonth}
           onNextMonth={handleNextMonth}
+          fromDate={new Date(fromDate)}
         />
       </PopoverContent>
     </Popover>
