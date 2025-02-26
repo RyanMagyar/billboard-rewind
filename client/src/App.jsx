@@ -37,6 +37,8 @@ function App() {
   const [chart, setChart] = useState();
   const [chartData, setChartData] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [playlistIsLoading, setPlaylistIsLoading] = useState(false);
+  const [playlistUrl, setPlaylistUrl] = useState();
 
   const handleChartChange = (chart) => {
     setChart(chart);
@@ -70,6 +72,39 @@ function App() {
       console.error("Error fetching chart data:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const createSpotifyPlaylist = async () => {
+    console.log("Selected Date:", selectedDate);
+    console.log("Selected Chart:", chart);
+    setPlaylistIsLoading(true);
+    try {
+      const response = await fetch(
+        `http://localhost:3000/createPlaylist?date=${encodeURIComponent(
+          format(selectedDate, "dd-MM-yyyy")
+        )}&chart=${encodeURIComponent(chart)}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(chartData),
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response not ok");
+      }
+
+      const data = await response.json();
+      console.log("Playlist Data:", data);
+      setPlaylistUrl(data.playlist.external_urls.spotify);
+    } catch (error) {
+      console.error("Error fetching playlist data:", error);
+    } finally {
+      setPlaylistIsLoading(false);
     }
   };
 
@@ -111,12 +146,19 @@ function App() {
             ? format(selectedDate, "yyyy-MM-dd")
             : "No date selected"}
         </div>
+        <div>
+          {playlistIsLoading ? (
+            <LoadingSpinner size={48} className="text-black-500 mx-auto" />
+          ) : playlistUrl ? (
+            <a href={playlistUrl} target="_blank" rel="noopener noreferrer">
+              View Playlist
+            </a>
+          ) : null}
+        </div>
       </div>
       <div className="w-[800px] mx-auto">
         <div className="flex justify-end">
-          <a href="http://localhost:3000/login">
-            <Button>Create Playlist</Button>
-          </a>
+          <Button onClick={createSpotifyPlaylist}>Create Playlist</Button>
         </div>
         <Table>
           <TableCaption>

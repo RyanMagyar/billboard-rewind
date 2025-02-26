@@ -53,7 +53,7 @@ async function fetchWebApi(endpoint, method, token, body) {
   return await res.json();
 }
 
-async function createPlaylist(uriArray, chart, week, token) {
+async function createPlaylist(uriArray, chart, date, token) {
   const { id: user_id } = await fetchWebApi("v1/me", "GET", token);
 
   const playlist = await fetchWebApi(
@@ -61,7 +61,7 @@ async function createPlaylist(uriArray, chart, week, token) {
     "POST",
     token,
     {
-      name: "Top " + chart + " Tracks " + week,
+      name: "Top " + chart + " Tracks " + date,
       description: "Playlist created by Billboard rewind",
       public: false,
     }
@@ -82,11 +82,13 @@ async function createPlaylist(uriArray, chart, week, token) {
 async function searchTracks(songArray, token, year) {
   var uriArray = [];
   var failedArray = [];
+  console.log("Songs array length: " + songArray.length);
   for (let i = 0; i < songArray.length; i++) {
     var artist = songArray[i].artist;
     var track = songArray[i].title.replace(/\s*\(.*?\)\s*/g, "").trim();
     var rank = songArray[i].rank;
 
+    console.log("Searching: " + track);
     var response = await fetchWebApi(
       `v1/search?q=track:${track} artist:${artist} year:${year - 1}-${
         Number(year) + 1
@@ -124,13 +126,16 @@ async function searchTracks(songArray, token, year) {
       (response.tracks.items &&
         !response.tracks.items.length &&
         artist.includes("And")) ||
-      artist.includes("With")
+      artist.includes("With") ||
+      artist.includes(" x ")
     ) {
       var splitArtist;
       if (artist.includes("And")) {
         splitArtist = artist.split(" And ");
       } else if (artist.includes("With")) {
         splitArtist = artist.split(" With ");
+      } else if (artist.includes(" x ")) {
+        splitArtist = artist.split(" x ");
       }
       response = await fetchWebApi(
         `v1/search?q=track:${track} artist:${splitArtist[0]}&type=track&market=US&limit=1&offset=0`,
@@ -379,14 +384,14 @@ app.get("/getChart", async (req, res) => {
 app.post("/createPlaylist", async (req, res) => {
   if (!req.session.access_token) {
     console.log("/createPlaylist with no access token");
-    return res.redirect("/login");
+    return res.status(402).send("Error No Access Token");
   }
 
   if (Date.now() > req.session.expires_at) {
     console.log("/createPLaylist refreshing token");
     const tokenRes = await refreshToken(req);
     if (tokenRes === 402) {
-      return res.redirect("/login");
+      return res.status(402).send("Token Refresh Error");
     } else if (tokenRes === 500) {
       return res.status(500).send("Internal Server Error");
     }
@@ -396,24 +401,29 @@ app.post("/createPlaylist", async (req, res) => {
   console.log("RESPONSE");
 
   const chart = req.query.chart;
-  const week = req.query.week;
+  const date = req.query.date;
   const songArray = req.body;
   const token = req.session.access_token;
-  const dateArray = week.split("-");
+  const dateArray = date.split("-");
   const year = dateArray[2];
   //console.log(songArray);
 
   console.log("Searching Songs");
+  console.log("Chart: " + chart);
+  console.log("Date: " + date);
+  console.log("Body: " + JSON.stringify(req.body, null, 2));
   const songsObj = await searchTracks(songArray, token, year);
+  console.log("Returned from searchTracks");
   const uriArray = songsObj.uriArray;
   const failedArray = songsObj.failedArray;
 
-  const createdPlaylist = await createPlaylist(uriArray, chart, week, token);
+  const createdPlaylist = await createPlaylist(uriArray, chart, date, token);
 
-  res.json({ playlist: createdPlaylist, failedArray: failedArray });
+  return res.json({ playlist: createdPlaylist, failedArray: failedArray });
 });
 
 app.get("/callback", async (req, res) => {
+  console.log("Running callback");
   if (req.query.error) {
     console.log("ERROR in req");
     return JSON.stringify({ error: req.query.error });
