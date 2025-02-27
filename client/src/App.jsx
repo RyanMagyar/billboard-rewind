@@ -21,6 +21,8 @@ import {
   TableRow,
 } from "./components/ui/table";
 
+import vinylGif from "./assets/vinyl2.gif";
+
 const charts = {
   Rock: "Rock",
   Rap: "Hip Hop/R&B",
@@ -188,19 +190,26 @@ function App() {
             ? format(selectedDate, "yyyy-MM-dd")
             : "No date selected"}
         </div>*/}
-        <div>
+        <div className="py-5">
           {playlistIsLoading ? (
-            <LoadingSpinner size={48} className="text-black-500 mx-auto" />
+            <LoadingSpinner size={48} className="text-purple-500 mx-auto" />
           ) : playlistUrl ? (
-            <a href={playlistUrl} target="_blank" rel="noopener noreferrer">
-              View Playlist
+            <a
+              href={playlistUrl}
+              className="border-2 p-2 border-purple-500"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View Your Playlist on Spotify
             </a>
           ) : null}
         </div>
         <div>
           {songsNotFound ? (
             <Table>
-              <TableCaption>Songs Spotify couldn&apos;t find</TableCaption>
+              <TableCaption className="text-red-400">
+                Songs Spotify couldn&apos;t add
+              </TableCaption>
 
               <TableHeader>
                 <TableRow>
@@ -228,7 +237,7 @@ function App() {
         </div>
       </div>
       <div className="w-full overflow-auto mx-auto mb-10">
-        <div className="flex w-[400px] md:w-[600px] lg:w-[800px] mx-auto justify-end">
+        <div className="flex w-full md:w-[600px] lg:w-[800px] mx-auto justify-center md:justify-end mt-5">
           {isLoggedIn ? (
             <Button onClick={createSpotifyPlaylist}>Create Playlist</Button>
           ) : (
@@ -237,7 +246,7 @@ function App() {
             </a>
           )}
         </div>
-        <Table className="w-[200px] md:w-[600px] lg:w-[800px] mx-auto">
+        <Table className="w-full md:w-[600px] lg:w-[800px] mx-auto">
           <TableCaption>
             {charts[chart]} chart for {format(selectedDate, "dd-MM-yyyy")}
           </TableCaption>
@@ -264,9 +273,14 @@ function App() {
             {isLoading ? (
               <TableRow>
                 <TableCell colSpan="6" className="text-center h-[200px]">
-                  <LoadingSpinner
+                  {/*<LoadingSpinner
                     size={48}
-                    className="text-black-500 mx-auto"
+                    className="text-purple-500 mx-auto"
+                  />*/}
+                  <img
+                    src={vinylGif}
+                    alt="Spinning Record"
+                    className="text-black-500 w-64 h-64 mx-auto"
                   />
                 </TableCell>
               </TableRow>
