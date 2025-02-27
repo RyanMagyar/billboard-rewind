@@ -221,6 +221,16 @@ app.get("/token", (req, res) => {
   }
 });
 
+app.get("/check-session", (req, res) => {
+  // Check if the session cookie exists
+  const sessionCookie = req.session.access_token;
+  if (sessionCookie) {
+    res.json({ hasSession: true });
+  } else {
+    res.json({ hasSession: false });
+  }
+});
+
 app.get("/login", (req, res) => {
   var state = "ovXzE45nraCUnDjX";
   var scope = "user-read-private user-read-email playlist-modify-private";

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "./components/ui/button";
 import { DatePicker } from "./components/ui/datepicker";
 import { format } from "date-fns";
@@ -50,6 +50,28 @@ function App() {
   const [playlistIsLoading, setPlaylistIsLoading] = useState(false);
   const [playlistUrl, setPlaylistUrl] = useState();
   const [songsNotFound, setSongsNotFound] = useState();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/check-session", {
+          method: "GET",
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setIsLoggedIn(data.hasSession);
+        } else {
+          console.error("Failed to check session:", response.status);
+        }
+      } catch (error) {
+        console.error("Error checking session:", error);
+      }
+    };
+
+    checkSession();
+  }, []);
 
   const handleChartChange = (chart) => {
     setChart(chart);
@@ -130,9 +152,6 @@ function App() {
         <h1 className="flex-1 text-[2.5rem] font-semibold text-center">
           BillBoard Rewind
         </h1>
-        <a className="m-2 absolute right-0" href="http://localhost:3000/login">
-          <Button className="w-[100px]">Login</Button>
-        </a>
       </div>
       <div className="flex flex-col items-center mx-auto md:w-[500px] w-full space-y-4">
         <div className="flex w-full md:w-[500px] justify-around">
@@ -210,7 +229,13 @@ function App() {
       </div>
       <div className="w-full overflow-auto mx-auto mb-10">
         <div className="flex w-[400px] md:w-[600px] lg:w-[800px] mx-auto justify-end">
-          <Button onClick={createSpotifyPlaylist}>Create Playlist</Button>
+          {isLoggedIn ? (
+            <Button onClick={createSpotifyPlaylist}>Create Playlist</Button>
+          ) : (
+            <a className="" href="http://localhost:3000/login">
+              <Button className="w-[100px]">Login</Button>
+            </a>
+          )}
         </div>
         <Table className="w-[200px] md:w-[600px] lg:w-[800px] mx-auto">
           <TableCaption>
