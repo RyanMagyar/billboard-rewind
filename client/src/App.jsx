@@ -134,9 +134,13 @@ function App() {
           <Button className="w-[100px]">Login</Button>
         </a>
       </div>
-      <div className="flex flex-col items-center mx-auto w-[500px] space-y-4">
-        <div className="flex w-[500px] justify-around">
-          <Select onValueChange={handleChartChange} value={chart}>
+      <div className="flex flex-col items-center mx-auto md:w-[500px] w-full space-y-4">
+        <div className="flex w-full md:w-[500px] justify-around">
+          <Select
+            className="w-[250px]"
+            onValueChange={handleChartChange}
+            value={chart}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select a chart" />
             </SelectTrigger>
@@ -154,15 +158,17 @@ function App() {
             selectedDate={selectedDate}
             onDateChange={setSelectedDate}
             fromDate={chartDates[chart]}
+            className=""
           />
         </div>
         <Button onClick={getChartData}>Get Chart Data</Button>
+        {/*
         <div>
           Selected Date:{" "}
           {selectedDate
             ? format(selectedDate, "yyyy-MM-dd")
             : "No date selected"}
-        </div>
+        </div>*/}
         <div>
           {playlistIsLoading ? (
             <LoadingSpinner size={48} className="text-black-500 mx-auto" />
@@ -202,13 +208,13 @@ function App() {
           ) : null}
         </div>
       </div>
-      <div className="w-[800px] mx-auto mb-10">
-        <div className="flex justify-end">
+      <div className="w-full overflow-auto mx-auto mb-10">
+        <div className="flex w-[400px] md:w-[600px] lg:w-[800px] mx-auto justify-end">
           <Button onClick={createSpotifyPlaylist}>Create Playlist</Button>
         </div>
-        <Table>
+        <Table className="w-[200px] md:w-[600px] lg:w-[800px] mx-auto">
           <TableCaption>
-            {chart} chart for {format(selectedDate, "dd-MM-yyyy")}
+            {charts[chart]} chart for {format(selectedDate, "dd-MM-yyyy")}
           </TableCaption>
           <TableHeader>
             <TableRow>

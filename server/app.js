@@ -56,12 +56,22 @@ async function fetchWebApi(endpoint, method, token, body) {
 async function createPlaylist(uriArray, chart, date, token) {
   const { id: user_id } = await fetchWebApi("v1/me", "GET", token);
 
+  const charts = {
+    Rock: "Rock",
+    Rap: "Hip Hop/R&B",
+    Hot: "Hot-100",
+    Alt: "Alternative",
+    Pop: "Pop",
+    Country: "Country",
+    Latin: "Latin",
+  };
+
   const playlist = await fetchWebApi(
     `v1/users/${user_id}/playlists`,
     "POST",
     token,
     {
-      name: "Top " + chart + " Tracks " + date,
+      name: "Top " + charts[chart] + " Tracks " + date,
       description: "Playlist created by Billboard rewind",
       public: false,
     }
