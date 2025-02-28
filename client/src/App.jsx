@@ -50,9 +50,17 @@ function App() {
   const [chartData, setChartData] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [playlistIsLoading, setPlaylistIsLoading] = useState(false);
-  const [playlistUrl, setPlaylistUrl] = useState();
-  const [songsNotFound, setSongsNotFound] = useState();
+  const [playlistUrl, setPlaylistUrl] = useState("a");
+  const [songsNotFound, setSongsNotFound] = useState([
+    {
+      rank: 1,
+      track: "Hello",
+      artist: "Bruce Spring",
+    },
+  ]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Disable buttons if no data in chartData
 
   useEffect(() => {
     const checkSession = async () => {
@@ -196,11 +204,13 @@ function App() {
           ) : playlistUrl ? (
             <a
               href={playlistUrl}
-              className="border-2 p-2 border-purple-500"
+              className=""
               target="_blank"
               rel="noopener noreferrer"
             >
-              View Your Playlist on Spotify
+              <Button variant="destructive">
+                View Your Playlist on Spotify
+              </Button>
             </a>
           ) : null}
         </div>
@@ -242,7 +252,7 @@ function App() {
             <Button onClick={createSpotifyPlaylist}>Create Playlist</Button>
           ) : (
             <a className="" href="http://localhost:3000/login">
-              <Button className="w-[100px]">Login</Button>
+              <Button className="">Connect Spotify</Button>
             </a>
           )}
         </div>
