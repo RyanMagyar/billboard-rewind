@@ -1,17 +1,21 @@
 const express = require("express");
 const { getChart } = require("billboard-top-100");
 var querystring = require("querystring");
-require("dotenv").config();
 const moment = require("moment");
 var cookieSession = require("cookie-session");
 const cors = require("cors");
-
+//require("dotenv").config();
+require("dotenv").config({
+  path: process.env.NODE_ENV === "prod" ? ".env.prod" : ".env.dev",
+});
 const app = express();
 const port = 3000;
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const SECRET = process.env.SECRET;
+const SERVER_URL = process.env.SERVER_URL;
+const CLIENT_URL = process.env.CLIENT_URL;
 const REDIRECT_URI = "http://localhost:3000/callback";
 
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
@@ -27,7 +31,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: SERVER_URL,
     credentials: true, //
   })
 );
@@ -89,16 +93,51 @@ async function createPlaylist(uriArray, chart, date, token) {
 // add refresh token logic
 // add failed search retries i.e wokring with '/' e.g Beth/Detroit Rock City, collab artists
 
+function removeUnmatchedBrackets(str) {
+  const stack = [];
+
+  const chars = str.split("");
+
+  const pairs = {
+    "(": ")",
+    "{": "}",
+    "[": "]",
+  };
+
+  chars.forEach((char, index) => {
+    if (pairs[char]) {
+      stack.push({ char, index });
+    } else if (Object.values(pairs).includes(char)) {
+      const last = stack.pop();
+
+      if (!last || pairs[last.char] !== char) {
+        chars[index] = "";
+        if (last) {
+          chars[last.index] = "";
+        }
+      }
+    }
+  });
+
+  stack.forEach(({ index }) => {
+    chars[index] = "";
+  });
+
+  return chars.join("");
+}
+
 async function searchTracks(songArray, token, year) {
   var uriArray = [];
   var failedArray = [];
-  //console.log("Songs array length: " + songArray.length);
+  console.log("Songs array length: " + songArray.length);
   for (let i = 0; i < songArray.length; i++) {
     var artist = songArray[i].artist;
     var track = songArray[i].title.replace(/\s*\(.*?\)\s*/g, "").trim();
+    var track = songArray[i].title.replace(/\s*\{.*?\}\s*/g, "").trim();
     var rank = songArray[i].rank;
+    var track = removeUnmatchedBrackets(track);
 
-    //console.log("Searching: " + track);
+    console.log("Searching: " + track);
     var response = await fetchWebApi(
       `v1/search?q=track:${track} artist:${artist} year:${year - 1}-${
         Number(year) + 1
@@ -197,7 +236,7 @@ async function searchTracks(songArray, token, year) {
       );
     }
   }
-
+  console.log("return from searchTracks");
   return {
     uriArray: uriArray,
     failedArray: failedArray,
@@ -496,10 +535,10 @@ app.get("/callback", async (req, res) => {
       console.log(access_token);
       console.log(refresh_token);
       console.log(expires_in);
-      res.redirect("http://localhost:5173/");
+      res.redirect(CLIENT_URL + "/");
     } catch (error) {
       console.error(error.message);
-      res.redirect("http://localhost:5173/");
+      res.redirect(CLIENT_URL + "/");
     }
   }
 });

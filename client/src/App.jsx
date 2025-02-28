@@ -63,12 +63,16 @@ function App() {
   // Disable buttons if no data in chartData
 
   useEffect(() => {
+    console.log(import.meta.env.VITE_API_URL);
     const checkSession = async () => {
       try {
-        const response = await fetch("http://localhost:3000/check-session", {
-          method: "GET",
-          credentials: "include",
-        });
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/check-session`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
         if (response.ok) {
           const data = await response.json();
           setIsLoggedIn(data.hasSession);
@@ -97,7 +101,7 @@ function App() {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:3000/getChart?date=${encodeURIComponent(
+        `${import.meta.env.VITE_API_URL}/getChart?date=${encodeURIComponent(
           format(selectedDate, "yyyy-MM-dd")
         )}&chart=${encodeURIComponent(chart)}`,
         {
@@ -128,7 +132,9 @@ function App() {
     setPlaylistIsLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:3000/createPlaylist?date=${encodeURIComponent(
+        `${
+          import.meta.env.VITE_API_URL
+        }/createPlaylist?date=${encodeURIComponent(
           format(selectedDate, "MM-dd-yyyy")
         )}&chart=${encodeURIComponent(chart)}`,
         {
@@ -251,7 +257,7 @@ function App() {
           {isLoggedIn ? (
             <Button onClick={createSpotifyPlaylist}>Create Playlist</Button>
           ) : (
-            <a className="" href="http://localhost:3000/login">
+            <a className="" href={`${import.meta.env.VITE_API_URL}/login`}>
               <Button className="">Connect Spotify</Button>
             </a>
           )}
