@@ -148,6 +148,7 @@ async function searchTracks(songArray, token, year) {
 
     //items array exists but is empty
     // try searching without the year
+    console.log(response.tracks.items);
     if (response.tracks.items && !response.tracks.items.length) {
       response = await fetchWebApi(
         `v1/search?q=track:${track} artist:${artist}&type=track&market=US&limit=1&offset=0`,

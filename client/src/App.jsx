@@ -57,6 +57,11 @@ function App() {
       track: "Hello",
       artist: "Bruce Spring",
     },
+    {
+      rank: 2,
+      track: "Stuck in My Head",
+      artist: "Falling in Reverse Featuring Saraya",
+    },
   ]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -162,6 +167,8 @@ function App() {
     }
   };
 
+  // Make buttons disabled when appropriate
+
   return (
     <>
       <div className="flex items-center justify-center  max-width mb-12 mx-auto lg:mb20">
@@ -214,13 +221,13 @@ function App() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button variant="destructive">
+              <Button className="bg-green-600 hover:bg-green-700">
                 View Your Playlist on Spotify
               </Button>
             </a>
           ) : null}
         </div>
-        <div>
+        <div className="w-[300px]">
           {songsNotFound ? (
             <Table>
               <TableCaption className="text-red-400">
@@ -263,7 +270,7 @@ function App() {
           )}
         </div>
         <Table className="w-full md:w-[600px] lg:w-[800px] mx-auto">
-          <TableCaption>
+          <TableCaption className="pt-5">
             {charts[chart]} chart for {format(selectedDate, "dd-MM-yyyy")}
           </TableCaption>
           <TableHeader>
@@ -274,7 +281,7 @@ function App() {
               {/*<TableHead className="w-[100px"></TableHead>*/}
               <TableHead className="text-bold">Title</TableHead>
               <TableHead className="text-bold">Artist</TableHead>
-              <TableHead className="w-[100px] text-center text-bold">
+              <TableHead className="hidden sm:table-cell w-[100px] text-center text-bold">
                 Last Week
               </TableHead>
               <TableHead className="w-[100px] text-center text-bold">
@@ -317,7 +324,7 @@ function App() {
                     */}
                   <TableCell>{song.title}</TableCell>
                   <TableCell>{song.artist}</TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="hidden sm:table-cell text-center">
                     {song.position.positionLastWeek}
                   </TableCell>
                   <TableCell className="text-center">
