@@ -4,6 +4,8 @@ var querystring = require("querystring");
 const moment = require("moment");
 var cookieSession = require("cookie-session");
 const cors = require("cors");
+const expAutoSan = require("express-autosanitizer");
+const { transpileModule } = require("typescript");
 //require("dotenv").config();
 require("dotenv").config({
   path: process.env.NODE_ENV === "prod" ? ".env.prod" : ".env.dev",
@@ -28,6 +30,8 @@ const API_BASE_URL = "https://api.spotify.com/v1/";
 app.set("trust proxy", 1);
 
 app.use(express.json());
+
+app.use(expAutoSan.all);
 
 app.use(
   cors({
@@ -92,6 +96,8 @@ async function createPlaylist(uriArray, chart, date, token) {
 
 // add refresh token logic
 // add failed search retries i.e wokring with '/' e.g Beth/Detroit Rock City, collab artists
+// add 5 minute delay to expires in
+// consider disallowing live unless last resort
 
 function removeUnmatchedBrackets(str) {
   const stack = [];
@@ -130,12 +136,17 @@ async function searchTracks(songArray, token, year) {
   var uriArray = [];
   var failedArray = [];
   console.log("Songs array length: " + songArray.length);
+  var last_rank = -1;
   for (let i = 0; i < songArray.length; i++) {
     var artist = songArray[i].artist;
     var track = songArray[i].title.replace(/\s*\(.*?\)\s*/g, "").trim();
     var track = songArray[i].title.replace(/\s*\{.*?\}\s*/g, "").trim();
     var rank = songArray[i].rank;
     var track = removeUnmatchedBrackets(track);
+
+    if (rank == last_rank) {
+      continue;
+    }
 
     console.log("Searching: " + track);
     var response = await fetchWebApi(
@@ -440,7 +451,15 @@ app.get("/getChart", async (req, res) => {
       });
     }
     songs = chart.songs;
-    console.log(chart.songs);
+    var last_rank = -1;
+    var has_duplicate = false;
+    var num_dups = 0;
+
+    // songs ranks from billboard are sometimes wrong set manually
+    for (var i = 0; i < songs.length; i++) {
+      songs[i].rank = i + 1;
+    }
+    //console.log(chart.songs);
     console.log("Week of " + chart.week);
     res.json(songs);
   });

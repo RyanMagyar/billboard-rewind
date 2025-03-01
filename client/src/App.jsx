@@ -311,16 +311,6 @@ function App() {
               chartData.map((song) => (
                 <TableRow key={song.rank}>
                   <TableCell className="font-bold">{song.rank}</TableCell>
-                  {/*
-                    <TableCell>
-                    
-                    <img
-                    src={song.cover}
-                    alt={song.title}
-                    className="w-[100px] h-[100px] object-cover"
-                    />
-                    </TableCell>
-                    */}
                   <TableCell>{song.title}</TableCell>
                   <TableCell>{song.artist}</TableCell>
                   <TableCell className="hidden sm:table-cell text-center">
