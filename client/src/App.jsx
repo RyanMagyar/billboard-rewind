@@ -21,7 +21,7 @@ import {
   TableRow,
 } from "./components/ui/table";
 
-import vinylGif from "./assets/vinyl2.gif";
+import vinylGif from "./assets/vinyl3.gif";
 
 const charts = {
   Rock: "Rock",
@@ -50,22 +50,9 @@ function App() {
   const [chartData, setChartData] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [playlistIsLoading, setPlaylistIsLoading] = useState(false);
-  const [playlistUrl, setPlaylistUrl] = useState("a");
-  const [songsNotFound, setSongsNotFound] = useState([
-    {
-      rank: 1,
-      track: "Hello",
-      artist: "Bruce Spring",
-    },
-    {
-      rank: 2,
-      track: "Stuck in My Head",
-      artist: "Falling in Reverse Featuring Saraya",
-    },
-  ]);
+  const [playlistUrl, setPlaylistUrl] = useState("");
+  const [songsNotFound, setSongsNotFound] = useState();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // Disable buttons if no data in chartData
 
   useEffect(() => {
     console.log(import.meta.env.VITE_API_URL);
@@ -203,7 +190,9 @@ function App() {
             className=""
           />
         </div>
-        <Button onClick={getChartData}>Get Chart Data</Button>
+        <Button disabled={chart ? false : true} onClick={getChartData}>
+          Get Chart Data
+        </Button>
         {/*
         <div>
           Selected Date:{" "}
@@ -262,7 +251,12 @@ function App() {
       <div className="w-full overflow-auto mx-auto mb-10">
         <div className="flex w-full md:w-[600px] lg:w-[800px] mx-auto justify-center md:justify-end mt-5">
           {isLoggedIn ? (
-            <Button onClick={createSpotifyPlaylist}>Create Playlist</Button>
+            <Button
+              disabled={chartData ? false : true}
+              onClick={createSpotifyPlaylist}
+            >
+              Create Playlist
+            </Button>
           ) : (
             <a className="" href={`${import.meta.env.VITE_API_URL}/login`}>
               <Button className="">Connect Spotify</Button>
@@ -271,7 +265,12 @@ function App() {
         </div>
         <Table className="w-full md:w-[600px] lg:w-[800px] mx-auto">
           <TableCaption className="pt-5">
-            {charts[chart]} chart for {format(selectedDate, "dd-MM-yyyy")}
+            {chart
+              ? `${charts[chart]} chart for ${format(
+                  selectedDate,
+                  "MM-dd-yyyy"
+                )}`
+              : "Please select a chart"}
           </TableCaption>
           <TableHeader>
             <TableRow>
