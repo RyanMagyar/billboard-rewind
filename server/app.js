@@ -136,17 +136,16 @@ async function searchTracks(songArray, token, year) {
   var uriArray = [];
   var failedArray = [];
   console.log("Songs array length: " + songArray.length);
-  var last_rank = -1;
+
   for (let i = 0; i < songArray.length; i++) {
     var artist = songArray[i].artist;
     var track = songArray[i].title.replace(/\s*\(.*?\)\s*/g, "").trim();
-    var track = songArray[i].title.replace(/\s*\{.*?\}\s*/g, "").trim();
+    console.log(track);
+    var track = track.replace(/\s*\{.*?\}\s*/g, "").trim();
+    console.log(track);
     var rank = songArray[i].rank;
     var track = removeUnmatchedBrackets(track);
-
-    if (rank == last_rank) {
-      continue;
-    }
+    console.log(track);
 
     console.log("Searching: " + track);
     var response = await fetchWebApi(
@@ -471,6 +470,21 @@ app.post("/createPlaylist", async (req, res) => {
     return res.status(402).send("Error No Access Token");
   }
 
+  const chart = req.query.chart;
+  const date = req.query.date;
+
+  if (!chart || !date) {
+    return res.status(400).send({
+      message: "Missing query params!",
+    });
+  }
+
+  if (!moment(date, "MM-DD-YYYY", true).isValid()) {
+    return res.status(400).send({
+      message: "Improper date format.",
+    });
+  }
+
   if (Date.now() > req.session.expires_at) {
     console.log("/createPLaylist refreshing token");
     const tokenRes = await refreshToken(req);
@@ -484,8 +498,6 @@ app.post("/createPlaylist", async (req, res) => {
 
   console.log("RESPONSE");
 
-  const chart = req.query.chart;
-  const date = req.query.date;
   const songArray = req.body;
   const token = req.session.access_token;
   const dateArray = date.split("-");

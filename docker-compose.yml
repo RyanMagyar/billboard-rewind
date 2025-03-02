@@ -1,0 +1,19 @@
+services:
+  billboard-frontend:
+    build:
+      dockerfile: Dockerfile
+      context: ./client
+    container_name: billboard-frontend
+    volumes:
+      - ./client:/client
+      - /client/node_modules
+    ports: ["5173:5173"]
+  billboard-backend:
+    build:
+      dockerfile: Dockerfile
+      context: ./server
+    container_name: billboard-backend
+    volumes:
+      - ./server:/server
+      - /server/node_modules
+    ports: ["3000:3000"]
