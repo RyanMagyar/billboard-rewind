@@ -456,18 +456,15 @@ app.get("/getChart", async (req, res) => {
   console.log(date);
 
   var songs;
-
+  // implement handling for no chart for this week
   getChart(chartUrl, date, (err, chart) => {
     if (err) {
-      //console.log(err);
+      console.log(err);
       return res.status(400).send({
         message: "Error!",
       });
     }
     songs = chart.songs;
-    var last_rank = -1;
-    var has_duplicate = false;
-    var num_dups = 0;
 
     // songs ranks from billboard are sometimes wrong set manually
     for (var i = 0; i < songs.length; i++) {

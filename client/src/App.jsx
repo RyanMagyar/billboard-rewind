@@ -266,10 +266,12 @@ function App() {
         <Table className="w-full md:w-[600px] lg:w-[800px] mx-auto">
           <TableCaption className="pt-5">
             {chart
-              ? `${charts[chart]} chart for ${format(
-                  selectedDate,
-                  "MM-dd-yyyy"
-                )}`
+              ? selectedDate
+                ? `${charts[chart]} chart for ${format(
+                    selectedDate,
+                    "MM-dd-yyyy"
+                  )}`
+                : "Please select a date"
               : "Please select a chart"}
           </TableCaption>
           <TableHeader>

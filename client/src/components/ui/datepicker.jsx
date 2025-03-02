@@ -78,6 +78,7 @@ export function DatePicker({
 
   React.useEffect(() => {
     // 🔥 Update date if selectedDate prop changes
+    console.log("Update: " + selectedDate);
     if (selectedDate && selectedDate.getTime() !== date.getTime()) {
       setDate(selectedDate);
       setVisibleMonth(selectedDate);
