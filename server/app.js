@@ -350,7 +350,7 @@ async function refreshToken(req) {
 
       req.session.access_token = access_token;
       req.session.refresh_token = refresh_token;
-      req.session.expires_at = Date.now() + expires_in * 1000;
+      req.session.expires_at = Date.now() + expires_in * 1000 - 300000;
 
       return 200;
     } else {
@@ -575,7 +575,7 @@ app.get("/callback", async (req, res) => {
 
       req.session.access_token = access_token;
       req.session.refresh_token = refresh_token;
-      req.session.expires_at = Date.now() + expires_in * 1000;
+      req.session.expires_at = Date.now() + expires_in * 1000 - 300000;
 
       console.log("success");
       console.log(json);
