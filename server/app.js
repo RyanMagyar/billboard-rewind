@@ -155,6 +155,16 @@ async function searchTracks(songArray, token, year) {
       "GET",
       token
     );
+    console.log(response);
+
+    // check if first version is live
+    var fallback_response = "";
+    try {
+      if (response.tracks.items[0].name.includes(" - Live")) {
+        fallback_response = response;
+        response.tracks.items = [];
+      }
+    } catch {}
 
     //items array exists but is empty
     // try searching without the year
@@ -235,6 +245,11 @@ async function searchTracks(songArray, token, year) {
           token
         );
       }
+    }
+
+    // if live version is the only version available
+    if (fallback_response && response.tracks.items.length == 0) {
+      response = fallback_response;
     }
 
     try {
