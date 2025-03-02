@@ -113,6 +113,18 @@ function App() {
       setChartData(data);
     } catch (error) {
       console.error("Error fetching chart data:", error);
+      setChartData([
+        {
+          rank: 0,
+          artist: "",
+          title: "Error: No chart data for selected date.",
+          position: {
+            peakPosition: "",
+            positionLastWeek: "",
+            weeksOnChart: "",
+          },
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
