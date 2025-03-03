@@ -6,7 +6,7 @@ var cookieSession = require("cookie-session");
 const cors = require("cors");
 const expAutoSan = require("express-autosanitizer");
 const { transpileModule } = require("typescript");
-//require("dotenv").config();
+
 require("dotenv").config({
   path: process.env.NODE_ENV === "prod" ? ".env.prod" : ".env.dev",
 });

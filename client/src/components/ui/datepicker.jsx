@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import * as React from "react";
+import { useState, useEffect } from "react";
 import {
   format,
   setMonth,
@@ -34,10 +34,8 @@ export function DatePicker({
   onDateChange,
   fromDate,
 }) {
-  const [date, setDate] = React.useState(selectedDate || new Date());
-  const [visibleMonth, setVisibleMonth] = React.useState(
-    selectedDate || new Date()
-  );
+  const [date, setDate] = useState(selectedDate || new Date());
+  const [visibleMonth, setVisibleMonth] = useState(selectedDate || new Date());
   const months = [
     "January",
     "February",
@@ -76,16 +74,16 @@ export function DatePicker({
     setVisibleMonth((prev) => addMonths(prev, 1));
   };
 
-  React.useEffect(() => {
-    // 🔥 Update date if selectedDate prop changes
-    console.log("Update: " + selectedDate);
+  useEffect(() => {
+    // Update date if selectedDate prop changes
+    // console.log("Update: " + selectedDate);
     if (selectedDate && selectedDate.getTime() !== date.getTime()) {
       setDate(selectedDate);
       setVisibleMonth(selectedDate);
     }
   }, [selectedDate]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Update parent state whenever the local state changes
     onDateChange(date);
   }, [date, onDateChange]);

@@ -115,7 +115,7 @@ function App() {
       console.error("Error fetching chart data:", error);
       setChartData([
         {
-          rank: 0,
+          rank: "",
           artist: "",
           title: "Error: No chart data for selected date.",
           position: {
