@@ -592,7 +592,9 @@ app.get("/callback", async (req, res) => {
 app.get("/", (req, res) => {
   res.send("Hello <a href='login'>Login with Spotify</a>");
 });
-
+/*
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+*/
+module.exports = app;
