@@ -59,7 +59,7 @@ function App() {
     const checkSession = async () => {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/check-session`,
+          `${import.meta.env.VITE_API_URL}/auth/check-session`,
           {
             method: "GET",
             credentials: "include",
@@ -93,7 +93,9 @@ function App() {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/getChart?date=${encodeURIComponent(
+        `${
+          import.meta.env.VITE_API_URL
+        }/charts/getChart?date=${encodeURIComponent(
           format(selectedDate, "yyyy-MM-dd")
         )}&chart=${encodeURIComponent(chart)}`,
         {
@@ -138,7 +140,7 @@ function App() {
       const response = await fetch(
         `${
           import.meta.env.VITE_API_URL
-        }/createPlaylist?date=${encodeURIComponent(
+        }/playlist/createPlaylist?date=${encodeURIComponent(
           format(selectedDate, "MM-dd-yyyy")
         )}&chart=${encodeURIComponent(chart)}`,
         {
@@ -270,7 +272,7 @@ function App() {
               Create Playlist
             </Button>
           ) : (
-            <a className="" href={`${import.meta.env.VITE_API_URL}/login`}>
+            <a className="" href={`${import.meta.env.VITE_API_URL}/auth/login`}>
               <Button className="">Connect Spotify</Button>
             </a>
           )}

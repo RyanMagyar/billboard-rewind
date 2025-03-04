@@ -49,7 +49,17 @@ app.use(
     httpOnly: true,
   })
 );
+const chartRoutes = require("./routes/chartRoutes");
+app.use("/charts", chartRoutes);
 
+const authRoutes = require("./routes/authRoutes");
+
+app.use("/auth", authRoutes);
+
+const playlistRoutes = require("./routes/playlistRoutes");
+
+app.use("/playlist", playlistRoutes);
+/*
 async function fetchWebApi(endpoint, method, token, body) {
   const res = await fetch(`https://api.spotify.com/${endpoint}`, {
     headers: {
@@ -94,11 +104,6 @@ async function createPlaylist(uriArray, chart, date, token) {
   return playlist;
 }
 
-// add refresh token logic
-// add failed search retries i.e wokring with '/' e.g Beth/Detroit Rock City, collab artists
-// add 5 minute delay to expires in
-// consider disallowing live unless last resort
-
 function removeUnmatchedBrackets(str) {
   const stack = [];
 
@@ -139,9 +144,6 @@ async function searchTracks(songArray, token, year) {
 
   for (let i = 0; i < songArray.length; i++) {
     var artist = songArray[i].artist;
-    var track = songArray[i].title.replace(/\s*\(.*?\)\s*/g, "").trim();
-    console.log(track);
-    var track = track.replace(/\s*\{.*?\}\s*/g, "").trim();
     console.log(track);
     var rank = songArray[i].rank;
     var track = removeUnmatchedBrackets(track);
@@ -414,7 +416,7 @@ app.get("/refreshToken", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-*/
+// comment
 
 app.get("/getChart", async (req, res) => {
   //var chartName = "hot-mainstream-rock-tracks";
@@ -586,7 +588,7 @@ app.get("/callback", async (req, res) => {
     }
   }
 });
-
+*/
 app.get("/", (req, res) => {
   res.send("Hello <a href='login'>Login with Spotify</a>");
 });
