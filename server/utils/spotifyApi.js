@@ -1,4 +1,11 @@
 const { removeUnmatchedBrackets } = require("./helpers");
+const querystring = require("querystring");
+require("dotenv").config();
+
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+
+const TOKEN_URL = "https://accounts.spotify.com/api/token";
 
 async function fetchWebApi(endpoint, method, token, body) {
   const res = await fetch(`https://api.spotify.com/${endpoint}`, {
@@ -58,6 +65,7 @@ async function searchTracks(songArray, token, year) {
       .trim();
 
     console.log(`Searching: ${track}`);
+    console.log(`Year: year:${year - 1}-${Number(year) + 1}`);
 
     let query = `track:${track} artist:${artist} year:${year - 1}-${
       Number(year) + 1

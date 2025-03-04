@@ -266,7 +266,7 @@ function App() {
         <div className="flex w-full md:w-[600px] lg:w-[800px] mx-auto justify-center md:justify-end mt-5">
           {isLoggedIn ? (
             <Button
-              disabled={chartData ? false : true}
+              disabled={chartData ? (playlistIsLoading ? true : false) : true}
               onClick={createSpotifyPlaylist}
             >
               Create Playlist
