@@ -1,5 +1,15 @@
+jest.mock("cookie-session", () => {
+  return jest.fn(() => (req, res, next) => {
+    req.session = {
+      access_token: "mockAccessToken",
+      expires_at: Date.now() + 10000,
+    };
+    next();
+  });
+});
+
 const request = require("supertest");
-const app = require("../app");
+let app = require("../app");
 const {
   searchTracks,
   createPlaylist,
@@ -12,6 +22,11 @@ jest.mock("../utils/spotifyApi", () => ({
   refreshToken: jest.fn(),
 }));
 
+afterEach(() => {
+  jest.resetModules();
+  jest.clearAllMocks();
+});
+
 describe("POST /playlist/createPlaylist", () => {
   let mockSession;
 
@@ -23,12 +38,37 @@ describe("POST /playlist/createPlaylist", () => {
     };
   });
 
+  test("Should return 400 for missing query parameters", async () => {
+    const response = await request(app)
+      .post("/playlist/createPlaylist")
+      .query({ chart: "", date: "12-31-2023" });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("message", "Missing query params!");
+  });
+
+  test("Should return 400 for missing query parameters", async () => {
+    const response = await request(app)
+      .post("/playlist/createPlaylist")
+      .query({ chart: "Rock", date: "" });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("message", "Missing query params!");
+  });
+
   test("Should return 402 when access token is missing", async () => {
-    delete mockSession.access_token; // Remove access token
+    jest.resetModules();
+    jest.mock("cookie-session", () => {
+      return jest.fn(() => (req, res, next) => {
+        req.session = {}; // No access_token
+        next();
+      });
+    });
+
+    app = require("../app");
 
     const response = await request(app)
       .post("/playlist/createPlaylist")
-      .set("Cookie", [`session=${JSON.stringify(mockSession)}`])
       .query({ chart: "Rock", date: "12-31-2023" });
 
     expect(response.status).toBe(402);
