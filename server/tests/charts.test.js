@@ -1,5 +1,6 @@
 const request = require("supertest");
 let app = require("../app");
+const { rockData1 } = require("./chartConstants");
 
 describe("GET /charts/getChart", () => {
   test("Should return 400 for missing query parameters", async () => {
@@ -58,5 +59,13 @@ describe("GET /charts/getChart", () => {
         "Error retrieving chart data."
       );
     }
+  });
+
+  test("Should return 200 and correct chart data", async () => {
+    const query = { chart: "Rock", date: "1981-03-21" };
+    const response = await request(app).get("/charts/getChart").query(query);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(rockData1);
   });
 });
