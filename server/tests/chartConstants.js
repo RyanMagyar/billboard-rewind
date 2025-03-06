@@ -481,6 +481,45 @@ const rockData1 = [
   },
 ];
 
+const mockRockData = [
+  {
+    rank: 1,
+    title: "I Can't Stand It",
+    artist: "Eric Clapton And His Band",
+    cover:
+      "https://charts-static.billboard.com/img/1970/02/eric-clapton-pmc-180x180.jpg",
+    position: {
+      positionLastWeek: null,
+      peakPosition: 1,
+      weeksOnChart: 1,
+    },
+  },
+  {
+    rank: 2,
+    title: "While You See A Chance",
+    artist: "Steve Winwood",
+    cover:
+      "https://charts-static.billboard.com/img/1981/03/steve-winwood-6hs-180x180.jpg",
+    position: {
+      positionLastWeek: null,
+      peakPosition: 2,
+      weeksOnChart: 1,
+    },
+  },
+  {
+    rank: 3,
+    title: "The Party's Over (Hopelessly In Love)",
+    artist: "Journey",
+    cover:
+      "https://charts-static.billboard.com/img/1975/05/journey-0b3-180x180.jpg",
+    position: {
+      positionLastWeek: null,
+      peakPosition: 3,
+      weeksOnChart: 1,
+    },
+  },
+];
+
 const mockRockResult = [
   {
     rank: 1,
@@ -520,4 +559,4 @@ const mockRockResult = [
   },
 ];
 
-module.exports = { rockData1, mockRockResult };
+module.exports = { rockData1, mockRockData, mockRockResult };

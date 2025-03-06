@@ -1,7 +1,8 @@
 const request = require("supertest");
 let app = require("../app");
-const { rockData1, mockRockResult } = require("./chartConstants");
+const { rockData1, mockRockData, mockRockResult } = require("./chartConstants");
 const { getChart } = require("billboard-top-100");
+const realGetChart = jest.requireActual("billboard-top-100").getChart;
 
 jest.mock("billboard-top-100", () => ({
   getChart: jest.fn(),
@@ -58,6 +59,7 @@ describe("GET /charts/getChart", () => {
   });
 
   test("Should return 400 for Error retrieving chart data", async () => {
+    getChart.mockImplementation(realGetChart);
     const queries = [{ chart: "Rock", date: "2030-01-01" }];
     for (const query of queries) {
       const response = await request(app).get("/charts/getChart").query(query);
@@ -71,6 +73,7 @@ describe("GET /charts/getChart", () => {
   });
 
   test("Should return 200 and correct chart data", async () => {
+    getChart.mockImplementation(realGetChart);
     const query = { chart: "Rock", date: "1981-03-21" };
     const response = await request(app).get("/charts/getChart").query(query);
 
@@ -81,44 +84,7 @@ describe("GET /charts/getChart", () => {
   test("Should return 200 and correct rankings for chart", async () => {
     getChart.mockImplementation((chartName, date, callback) => {
       callback(null, {
-        songs: [
-          {
-            rank: 1,
-            title: "I Can't Stand It",
-            artist: "Eric Clapton And His Band",
-            cover:
-              "https://charts-static.billboard.com/img/1970/02/eric-clapton-pmc-180x180.jpg",
-            position: {
-              positionLastWeek: null,
-              peakPosition: 1,
-              weeksOnChart: 1,
-            },
-          },
-          {
-            rank: 2,
-            title: "While You See A Chance",
-            artist: "Steve Winwood",
-            cover:
-              "https://charts-static.billboard.com/img/1981/03/steve-winwood-6hs-180x180.jpg",
-            position: {
-              positionLastWeek: null,
-              peakPosition: 2,
-              weeksOnChart: 1,
-            },
-          },
-          {
-            rank: 3,
-            title: "The Party's Over (Hopelessly In Love)",
-            artist: "Journey",
-            cover:
-              "https://charts-static.billboard.com/img/1975/05/journey-0b3-180x180.jpg",
-            position: {
-              positionLastWeek: null,
-              peakPosition: 3,
-              weeksOnChart: 1,
-            },
-          },
-        ],
+        songs: mockRockData,
         week: "1981-03-21",
       });
     });
