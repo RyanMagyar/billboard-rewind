@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "./components/ui/select";
 import { LoadingSpinner } from "./components/ui/design/loadingspinner";
-
+import { Info as InfoIcon } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -20,6 +20,14 @@ import {
   TableHeader,
   TableRow,
 } from "./components/ui/table";
+
+import { chartInfo } from "./constants";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 import vinylGif from "./assets/vinyl3.gif";
 
@@ -40,7 +48,7 @@ const chartDates = {
   Alt: "1988-09-10",
   Pop: "1961-07-17",
   Country: "1958-10-20",
-  Latin: "1986-20-09",
+  Latin: "1986-09-15",
 };
 
 function App() {
@@ -178,23 +186,63 @@ function App() {
         </h1>
       </div>
       <div className="flex flex-col items-center mx-auto md:w-[500px] w-full space-y-4">
-        <div className="flex w-full md:w-[500px] justify-around">
-          <Select
-            className="w-[250px]"
-            onValueChange={handleChartChange}
-            value={chart}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select a chart" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(charts).map(([key, value]) => (
-                <SelectItem key={key} value={key}>
-                  {value}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="flex flex-col sm:flex-row space-y-5 sm:space-y-0 w-full sm:w-[500px] items-center justify-around">
+          <div className="flex items-center space-x-2 mr-[24px] sm:mr-0">
+            <Popover>
+              <PopoverTrigger>
+                <InfoIcon className="text-gray-500 hover:text-white transition-colors duration-200" />
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                {chart ? (
+                  <div className="flex flex-col gap-4">
+                    <h4 className="font-medium leading-none">
+                      {chartInfo[chart].name} Chart
+                    </h4>
+                    <div>
+                      <p className="font-small leading-none">
+                        First Chart Date: {chartInfo[chart].firstChart}
+                      </p>
+                      <p className="my-5"> {chartInfo[chart].info}</p>
+                      <a
+                        href={
+                          chartInfo[chart].link +
+                          (selectedDate
+                            ? format(selectedDate, "yyyy-MM-dd")
+                            : "")
+                        }
+                        className="text-blue-500"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        See chart on BillBoard.com
+                      </a>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-sm">My Popover</p>
+                  </div>
+                )}
+              </PopoverContent>
+            </Popover>
+            <Select
+              className="w-[250px]"
+              onValueChange={handleChartChange}
+              value={chart}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select a chart" />
+              </SelectTrigger>
+
+              <SelectContent>
+                {Object.entries(charts).map(([key, value]) => (
+                  <SelectItem key={key} value={key}>
+                    {value}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <DatePicker
             startYear={chart ? Number(chartDates[chart].split("-")[0]) : 1958}
             endYear={2025}
