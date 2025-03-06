@@ -1,4 +1,4 @@
-const { getChart } = require("billboard-top-100");
+const billboard = require("billboard-top-100");
 const moment = require("moment");
 
 const genres = {
@@ -10,6 +10,8 @@ const genres = {
   Country: "country-songs",
   Latin: "latin-songs",
 };
+
+const getChart = billboard.getChart;
 
 const getChartData = async (req, res) => {
   const chartName = req.query.chart;
@@ -41,4 +43,4 @@ const getChartData = async (req, res) => {
   });
 };
 
-module.exports = { getChartData };
+module.exports = { getChartData, getChart };
