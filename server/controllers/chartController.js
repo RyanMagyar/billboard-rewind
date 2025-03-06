@@ -36,7 +36,8 @@ const getChartData = async (req, res) => {
     // Ensure songs have correct ranks
     chart.songs.forEach((song, index) => (song.rank = index + 1));
 
-    console.log(`Week of ${chart.week}`);
+    //console.log(`Week of ${chart.week}`);
+    //console.log(JSON.stringify(chart, null, 2));
     res.json(chart.songs);
   });
 };

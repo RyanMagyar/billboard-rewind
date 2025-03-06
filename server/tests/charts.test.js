@@ -1,6 +1,17 @@
 const request = require("supertest");
 let app = require("../app");
-const { rockData1, mockRockData, mockRockResult } = require("./chartConstants");
+const {
+  rockData1,
+  mockRockData,
+  mockRockResult,
+  firstLatinResult,
+  firstRbResult,
+  firstRockResult,
+  firstHotResult,
+  firstAltResult,
+  firstPopResult,
+  firstCountryResult,
+} = require("./chartConstants");
 const { getChart } = require("billboard-top-100");
 const realGetChart = jest.requireActual("billboard-top-100").getChart;
 
@@ -72,13 +83,76 @@ describe("GET /charts/getChart", () => {
     }
   });
 
-  test("Should return 200 and correct chart data", async () => {
+  test("Should return 200 and correct rock chart data", async () => {
     getChart.mockImplementation(realGetChart);
     const query = { chart: "Rock", date: "1981-03-21" };
     const response = await request(app).get("/charts/getChart").query(query);
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual(rockData1);
+  });
+
+  test("Should return 200 and correct rock chart data for first available week", async () => {
+    getChart.mockImplementation(realGetChart);
+    const query = { chart: "Rock", date: "1981-03-20" };
+    const response = await request(app).get("/charts/getChart").query(query);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(firstRockResult);
+  });
+
+  test("Should return 200 and correct Hot-100 chart data for first available week", async () => {
+    getChart.mockImplementation(realGetChart);
+    const query = { chart: "Hot", date: "1958-08-03" };
+    const response = await request(app).get("/charts/getChart").query(query);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(firstHotResult);
+  });
+
+  test("Should return 200 and correct Alt chart data for first available week", async () => {
+    getChart.mockImplementation(realGetChart);
+    const query = { chart: "Alt", date: "1988-08-09" };
+    const response = await request(app).get("/charts/getChart").query(query);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(firstAltResult);
+  });
+
+  test("Should return 200 and correct pop chart data for first available week", async () => {
+    getChart.mockImplementation(realGetChart);
+    const query = { chart: "Pop", date: "1961-07-16" };
+    const response = await request(app).get("/charts/getChart").query(query);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(firstPopResult);
+  });
+
+  test("Should return 200 and correct country chart data for first available week", async () => {
+    getChart.mockImplementation(realGetChart);
+    const query = { chart: "Country", date: "1958-10-19" };
+    const response = await request(app).get("/charts/getChart").query(query);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(firstCountryResult);
+  });
+
+  test("Should return 200 and correct hip hop/r&b chart data for first available week", async () => {
+    getChart.mockImplementation(realGetChart);
+    const query = { chart: "Rap", date: "1958-10-19" };
+    const response = await request(app).get("/charts/getChart").query(query);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(firstRbResult);
+  });
+
+  test("Should return 200 and correct latin chart data for first available week", async () => {
+    getChart.mockImplementation(realGetChart);
+    const query = { chart: "Latin", date: "1986-09-14" };
+    const response = await request(app).get("/charts/getChart").query(query);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(firstLatinResult);
   });
 
   test("Should return 200 and correct rankings for chart", async () => {
