@@ -17,3 +17,18 @@ services:
       - ./server:/server
       - /server/node_modules
     ports: ["3000:3000"]
+    depends_on:
+      - db
+
+  db:
+    image: postgres:latest
+    container_name: billboard-db
+    restart: always
+    ports: ["5432:5432"]
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./server/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    env_file:
+      - ./.env.dev.db
+volumes:
+  postgres_data:
