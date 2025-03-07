@@ -30,6 +30,9 @@ import {
 } from "@/components/ui/popover";
 
 import vinylGif from "./assets/vinyl3.gif";
+import vinylLogo from "./assets/recordLogo.svg";
+//import spotifyGreen from "./assets/Spotify_Full_Logo_RGB_Green.png";
+import spotifyWhite from "./assets/Spotify_Full_Logo_RGB_White.png";
 
 const charts = {
   Rock: "Rock",
@@ -180,10 +183,20 @@ function App() {
 
   return (
     <>
-      <div className="flex items-center justify-center  max-width mb-12 mx-auto lg:mb20">
-        <h1 className="flex-1 text-[2.5rem] font-semibold text-center">
-          BillBoard Rewind
-        </h1>
+      <div>
+        <div className="flex justify-center items-center space-x-2 mt-3 mr-[5px] sm:mr-0 mb-5 mx-auto">
+          <img
+            className="h-[45px] w-[45px] sm:h-[75px] sm:w-[75px]"
+            src={vinylLogo}
+          />
+          <h1 className="text-[2.0rem] sm:text-[4.5rem] font-semibold text-center">
+            Billboard Rewind
+          </h1>
+        </div>
+        <p className="text-center font-semibold mx-auto mt-5 mb-5">
+          Connect with
+        </p>
+        <img className="h-[75px] mx-auto mt-5 mb-10" src={spotifyWhite} />
       </div>
       <div className="flex flex-col items-center mx-auto md:w-[500px] w-full space-y-4">
         <div className="flex flex-col sm:flex-row space-y-5 sm:space-y-0 w-full sm:w-[500px] items-center justify-around">
@@ -195,14 +208,17 @@ function App() {
               <PopoverContent className="w-80">
                 {chart ? (
                   <div className="flex flex-col gap-4">
-                    <h4 className="font-medium leading-none">
+                    <h4 className="font-medium text-lg leading-none">
                       {chartInfo[chart].name} Chart
                     </h4>
                     <div>
-                      <p className="font-small leading-none">
+                      <p className="font-small text-small leading-none">
                         First Chart Date: {chartInfo[chart].firstChart}
                       </p>
-                      <p className="my-5"> {chartInfo[chart].info}</p>
+                      <p className="my-5 font-small text-small">
+                        {" "}
+                        {chartInfo[chart].info}
+                      </p>
                       <a
                         href={
                           chartInfo[chart].link +
@@ -220,7 +236,7 @@ function App() {
                   </div>
                 ) : (
                   <div>
-                    <p className="text-sm">My Popover</p>
+                    <p className="text-sm">Select a chart to see info.</p>
                   </div>
                 )}
               </PopoverContent>
@@ -321,7 +337,7 @@ function App() {
             </Button>
           ) : (
             <a className="" href={`${import.meta.env.VITE_API_URL}/auth/login`}>
-              <Button className="">Connect Spotify</Button>
+              <Button className="">Connect to Spotify</Button>
             </a>
           )}
         </div>

@@ -2,7 +2,7 @@ export const chartInfo = {
   Rock: {
     name: "Rock",
     firstChart: "March 21, 1981",
-    info: "The week's most popular mainstream rock songs ranked be radio airplay.",
+    info: "The week's most popular mainstream rock songs ranked by radio airplay.",
     link: "https://www.billboard.com/charts/hot-mainstream-rock-tracks/",
   },
   Rap: {
@@ -13,7 +13,7 @@ export const chartInfo = {
   },
   Hot: {
     name: "Billboard Hot-100",
-    firstChart: "Auguest 4, 1958",
+    firstChart: "August 4, 1958",
     info: "The week's most popular songs from all genres ranked by streaming and radio airplay.",
     link: "https://www.billboard.com/charts/hot-100/",
   },
