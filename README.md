@@ -4,7 +4,7 @@ Billboard Rewind is a site where users can view various [Billboard.com](https://
 
 The site is currently awaiting approval from Spotify for access to public users.
 
-Here is a short demo video for the in the meantime site: [Demo Video](https://youtu.be/O0qu6ET8pLo)
+Here is a short demo video for the site in the meantime: [Demo Video](https://youtu.be/O0qu6ET8pLo)
 
 # How It Works:
 
