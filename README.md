@@ -4,6 +4,8 @@ Billboard Rewind is a site where users can view various [Billboard.com](https://
 
 The site is currently awaiting approval from Spotify for access for public users.
 
+However here is a short demo video for the site: [Demo Video](https://youtu.be/O0qu6ET8pLo)
+
 # How It Works:
 
 The site scraps chart metadata from Billboard.com for a given chart and date. If a Spotify account is connected and a playlist is requested, the site uses Spotify's search API to search for each song on spotify. If it can find the song, the song is added to a new playlist on the user's account in the order that it appeared on the chart. Songs that couldn't be found on Spotify are displayed to users after the search is complete. A link to the user's new playlist on Spotify is also displayed.
