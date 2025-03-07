@@ -317,7 +317,7 @@ function App() {
                   songsNotFound.map((song) => (
                     <TableRow key={song.rank}>
                       <TableCell className="font-bold">{song.rank}</TableCell>
-                      <TableCell>{song.track}</TableCell>
+                      <TableCell>{song.title}</TableCell>
                       <TableCell>{song.artist}</TableCell>
                     </TableRow>
                   ))}

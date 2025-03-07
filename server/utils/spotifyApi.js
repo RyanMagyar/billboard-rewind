@@ -1,4 +1,4 @@
-const { removeUnmatchedBrackets } = require("./helpers");
+const { removeUnmatchedBrackets, getNextSaturday } = require("./helpers");
 const querystring = require("querystring");
 require("dotenv").config();
 
@@ -58,8 +58,41 @@ async function searchTracks(songArray, token, date, genre) {
   let failedArray = [];
 
   const year = date.split("-")[0];
+  const chartWeek = getNextSaturday(date);
 
   console.log(`Songs array length: ${songArray.length}`);
+  console.log(`Checking cache for chart: ${genre} on ${chartWeek}`);
+
+  const chartQuery = `SELECT * FROM charts WHERE chart_type = $1 AND chart_date = $2`;
+  const chartResult = await db.query(chartQuery, [genre, chartWeek]);
+
+  if (chartResult.rows.length > 0) {
+    const chart = chartResult.rows[0];
+
+    // If chart has Spotify data, parse it
+    if (chart.spotify_data_filled) {
+      console.log("Chart found in cache with Spotify data.");
+
+      let cachedSongs = chart.songs;
+      cachedSongs.forEach((song) => {
+        if (song.spotifyURI) {
+          uriArray.push(song.spotifyURI);
+        } else {
+          failedArray.push({
+            title: song.title,
+            artist: song.artist,
+            rank: song.rank,
+          });
+        }
+      });
+
+      return { uriArray, failedArray };
+    }
+
+    console.log("Chart found in cache but missing Spotify data.");
+  } else {
+    console.log("Chart not found in cache.");
+  }
 
   for (const song of songArray) {
     let { artist, title, rank } = song;
@@ -68,77 +101,132 @@ async function searchTracks(songArray, token, date, genre) {
       .replace(/\s*\{.*?\}\s*/g, "")
       .trim();
 
-    console.log(`Searching: ${track}`);
-    console.log(`Year: year:${year - 1}-${Number(year) + 1}`);
+    console.log(`Checking song cache: ${title} by ${artist}`);
+    const songQuery = `SELECT * FROM songs WHERE title ILIKE $1 AND artist ILIKE $2`;
+    const songResult = await db.query(songQuery, [title, artist]);
 
-    let query = `track:${track} artist:${artist} year:${year - 1}-${
-      Number(year) + 1
-    }`;
-    let response = await fetchWebApi(
-      `v1/search?q=${encodeURIComponent(
-        query
-      )}&type=track&market=US&limit=1&offset=0`,
-      "GET",
-      token
-    );
+    if (songResult.rows.length > 0) {
+      console.log("CACHE HIT");
+      const dbSong = songResult.rows[0];
 
-    let fallback_response = response?.tracks?.items[0]?.name.includes(" - Live")
-      ? response
-      : null;
+      if (dbSong.spotify_uri) {
+        uriArray.push(dbSong.spotify_uri);
+        song.spotifyURI = dbSong.spotify_uri;
+      } else {
+        failedArray.push({
+          title,
+          artist,
+          rank,
+        });
+        song.spotifyURI = "";
+      }
+    } else {
+      console.log(`Fetching song from Spotify: ${track}`);
 
-    if (!response.tracks.items.length) {
-      response = await fetchWebApi(
-        `v1/search?q=track:${track} artist:${artist}&type=track&market=US&limit=1&offset=0`,
+      console.log(`Year: year:${year - 1}-${Number(year) + 1}`);
+
+      let query = `track:${track} artist:${artist} year:${year - 1}-${
+        Number(year) + 1
+      }`;
+      let response = await fetchWebApi(
+        `v1/search?q=${encodeURIComponent(
+          query
+        )}&type=track&market=US&limit=1&offset=0`,
         "GET",
         token
       );
-    }
 
-    if (!response.tracks.items.length && track.includes("/")) {
-      response = await fetchWebApi(
-        `v1/search?q=track:${
-          track.split("/")[0]
-        } artist:${artist}&type=track&market=US&limit=1&offset=0`,
-        "GET",
-        token
-      );
-    }
+      let fallback_response = response?.tracks?.items[0]?.name.includes(
+        " - Live"
+      )
+        ? response
+        : null;
 
-    if (
-      !response.tracks.items.length &&
-      /(And|With| x |Featuring|Starring)/i.test(artist)
-    ) {
-      let splitArtist = artist
-        .split(/And|With| x |Featuring|Starring/i)
-        .map((a) => a.trim());
-
-      for (const split of splitArtist) {
+      if (!response.tracks.items.length) {
         response = await fetchWebApi(
-          `v1/search?q=track:${track} artist:${split}&type=track&market=US&limit=1&offset=0`,
+          `v1/search?q=track:${track} artist:${artist}&type=track&market=US&limit=1&offset=0`,
           "GET",
           token
         );
-        if (response.tracks.items.length) break;
       }
-    }
 
-    if (!response.tracks.items.length && fallback_response) {
-      response = fallback_response;
-    }
+      if (!response.tracks.items.length && track.includes("/")) {
+        response = await fetchWebApi(
+          `v1/search?q=track:${
+            track.split("/")[0]
+          } artist:${artist}&type=track&market=US&limit=1&offset=0`,
+          "GET",
+          token
+        );
+      }
 
-    try {
-      //console.log(response.tracks.items[0].uri);
-      uriArray.push(response.tracks.items[0].uri);
-      song.spotifyURI = response.tracks.items[0].uri;
-    } catch (error) {
-      failedArray.push({ track, artist, rank });
-      song.spotifyURI = "";
-      console.log(
-        `Couldn't add track: ${track} | Artist: ${artist} | Rank: ${rank}`
-      );
+      if (
+        !response.tracks.items.length &&
+        /(And|With| x |Featuring|Starring)/i.test(artist)
+      ) {
+        let splitArtist = artist
+          .split(/And|With| x |Featuring|Starring/i)
+          .map((a) => a.trim());
+
+        for (const split of splitArtist) {
+          response = await fetchWebApi(
+            `v1/search?q=track:${track} artist:${split}&type=track&market=US&limit=1&offset=0`,
+            "GET",
+            token
+          );
+          if (response.tracks.items.length) break;
+        }
+      }
+
+      if (!response.tracks.items.length && fallback_response) {
+        response = fallback_response;
+      }
+
+      try {
+        const spotifyURI = response.tracks.items[0].uri;
+        //console.log(spotifyURI);
+        uriArray.push(spotifyURI);
+        song.spotifyURI = spotifyURI;
+
+        // Store the new song in the database
+        await db.query(
+          `INSERT INTO songs (title, artist, spotify_uri) VALUES ($1, $2, $3) ON CONFLICT (title, artist) DO NOTHING`,
+          [title, artist, spotifyURI]
+        );
+      } catch (error) {
+        console.log(error);
+        failedArray.push({ title, artist, rank });
+        song.spotifyURI = "";
+        console.log(
+          `Couldn't add track: ${title} | Artist: ${artist} | Rank: ${rank}`
+        );
+
+        await db.query(
+          `INSERT INTO songs (title, artist) VALUES ($1, $2) ON CONFLICT (title, artist) DO NOTHING`,
+          [title, artist]
+        );
+      }
+      //break;
     }
   }
-  console.log(JSON.stringify(songArray, null, 2));
+
+  console.log("Updating DB chart with Spotify data.");
+
+  if (chartResult.rows.length > 0) {
+    await db.query(
+      `UPDATE charts SET songs = $1, spotify_data_filled = TRUE, updated_at = NOW() WHERE chart_type = $2 AND chart_date = $3`,
+      [JSON.stringify(songArray), genre, chartWeek]
+    );
+    console.log(JSON.stringify(songArray));
+  } else {
+    await db.query(
+      `INSERT INTO charts (chart_type, chart_date, songs, spotify_data_filled) VALUES ($1, $2, $3, TRUE)`,
+      [genre, chartWeek, JSON.stringify(songArray)]
+    );
+    //console.log(JSON.stringify(songArray, null, 2));
+  }
+
+  //console.log(JSON.stringify(songArray, null, 2));
   console.log("Returning from searchTracks");
   return { uriArray, failedArray };
 }
