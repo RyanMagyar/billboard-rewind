@@ -2,6 +2,8 @@ const { removeUnmatchedBrackets } = require("./helpers");
 const querystring = require("querystring");
 require("dotenv").config();
 
+const db = require("../db");
+
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
