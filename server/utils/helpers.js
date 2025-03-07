@@ -31,4 +31,17 @@ function removeUnmatchedBrackets(str) {
   return chars.join("");
 }
 
-module.exports = { removeUnmatchedBrackets };
+function getNextSaturday(inputDate) {
+  const date = new Date(inputDate);
+  const dayOfWeek = date.getUTCDay();
+
+  const daysToAdd = dayOfWeek === 6 ? 0 : 6 - dayOfWeek;
+
+  if (daysToAdd !== 0) {
+    date.setDate(date.getDate() + daysToAdd);
+  }
+
+  return date.toISOString().split("T")[0];
+}
+
+module.exports = { removeUnmatchedBrackets, getNextSaturday };

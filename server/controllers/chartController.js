@@ -1,4 +1,5 @@
 const { getChart } = require("billboard-top-100");
+const { getNextSaturday } = require("../utils/helpers");
 const moment = require("moment");
 
 const genres = {
@@ -36,7 +37,9 @@ const getChartData = async (req, res) => {
     // Ensure songs have correct ranks
     chart.songs.forEach((song, index) => (song.rank = index + 1));
 
-    //console.log(`Week of ${chart.week}`);
+    console.log("Input date: " + date);
+    console.log("Next Sat: " + getNextSaturday(date));
+    console.log(`Week of ${chart.week}`);
     //console.log(JSON.stringify(chart, null, 2));
     res.json(chart.songs);
   });

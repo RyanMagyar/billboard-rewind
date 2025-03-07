@@ -45,7 +45,7 @@ const charts = {
 };
 
 const chartDates = {
-  Rock: "1981-03-21",
+  Rock: "1981-03-22",
   Rap: "1958-10-20",
   Hot: "1958-08-04",
   Alt: "1988-09-10",
