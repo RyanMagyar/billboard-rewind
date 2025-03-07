@@ -41,9 +41,10 @@ async function createPlaylistHandler(req, res) {
 
   const songArray = req.body;
   const token = req.session.access_token;
-  const year = date.split("-")[2];
 
-  const songsObj = await searchTracks(songArray, token, year);
+  const myDate = moment(date, "MM-DD-YYYY").format("YYYY-MM-DD");
+
+  const songsObj = await searchTracks(songArray, token, myDate, chart);
   const uriArray = songsObj.uriArray;
   const failedArray = songsObj.failedArray;
 

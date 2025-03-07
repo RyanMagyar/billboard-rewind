@@ -51,9 +51,11 @@ async function createPlaylist(uriArray, chart, date, token) {
   return playlist;
 }
 
-async function searchTracks(songArray, token, year) {
+async function searchTracks(songArray, token, date, genre) {
   let uriArray = [];
   let failedArray = [];
+
+  const year = date.split("-")[0];
 
   console.log(`Songs array length: ${songArray.length}`);
 
@@ -123,15 +125,18 @@ async function searchTracks(songArray, token, year) {
     }
 
     try {
+      //console.log(response.tracks.items[0].uri);
       uriArray.push(response.tracks.items[0].uri);
+      song.spotifyURI = response.tracks.items[0].uri;
     } catch (error) {
       failedArray.push({ track, artist, rank });
+      song.spotifyURI = "";
       console.log(
         `Couldn't add track: ${track} | Artist: ${artist} | Rank: ${rank}`
       );
     }
   }
-
+  console.log(JSON.stringify(songArray, null, 2));
   console.log("Returning from searchTracks");
   return { uriArray, failedArray };
 }
