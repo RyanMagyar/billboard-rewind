@@ -51,7 +51,12 @@ const getChartData = async (req, res) => {
     }
 
     // Ensure songs have correct ranks
-    chart.songs.forEach((song, index) => (song.rank = index + 1));
+    chart.songs.forEach((song, index) => {
+      song.rank = index + 1;
+      song.title = song.title
+        .toLowerCase()
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+    });
 
     console.log("Input date: " + date);
     console.log("Next Sat: " + getNextSaturday(date));
