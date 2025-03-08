@@ -341,7 +341,7 @@ function App() {
             </a>
           )}
         </div>
-        <Table className="w-full md:w-[600px] lg:w-[800px] mx-auto">
+        <Table className="w-full md:w-[600px] lg:w-[900px] mx-auto">
           <TableCaption className="pt-5">
             {chart
               ? selectedDate

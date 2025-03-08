@@ -1,6 +1,7 @@
 const { getChart } = require("billboard-top-100");
 const { getNextSaturday } = require("../utils/helpers");
 const moment = require("moment");
+const db = require("../db");
 
 const genres = {
   Rock: "hot-mainstream-rock-tracks",
@@ -28,7 +29,22 @@ const getChartData = async (req, res) => {
     return res.status(400).send({ message: "Improper date format." });
   }
 
-  getChart(genres[chartName], date, (err, chart) => {
+  const chartWeek = getNextSaturday(date);
+
+  console.log(`Checking cache for chart: ${chartName} on ${chartWeek}`);
+
+  const chartQuery = `SELECT * FROM charts WHERE chart_type = $1 AND chart_date = $2`;
+  const chartResult = await db.query(chartQuery, [chartName, chartWeek]);
+
+  if (chartResult.rows.length > 0) {
+    const chart = chartResult.rows[0];
+    console.log("Cache hit for chart");
+    return res.json(chart.songs);
+  } else {
+    console.log("Chart not found in cache.");
+  }
+
+  getChart(genres[chartName], date, async (err, chart) => {
     if (err) {
       console.log(err);
       return res.status(400).send({ message: "Error retrieving chart data." });
@@ -41,6 +57,15 @@ const getChartData = async (req, res) => {
     console.log("Next Sat: " + getNextSaturday(date));
     console.log(`Week of ${chart.week}`);
     //console.log(JSON.stringify(chart, null, 2));
+
+    if (chartResult.rows.length == 0) {
+      console.log("Updating DB chart.");
+      await db.query(
+        `INSERT INTO charts (chart_type, chart_date, songs, spotify_data_filled) VALUES ($1, $2, $3, FALSE)`,
+        [chartName, chartWeek, JSON.stringify(chart.songs)]
+      );
+    }
+
     res.json(chart.songs);
   });
 };

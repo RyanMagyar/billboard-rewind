@@ -214,7 +214,7 @@ async function searchTracks(songArray, token, date, genre) {
 
   if (chartResult.rows.length > 0) {
     await db.query(
-      `UPDATE charts SET songs = $1, spotify_data_filled = TRUE, updated_at = NOW() WHERE chart_type = $2 AND chart_date = $3`,
+      `UPDATE charts SET songs = $1, spotify_data_filled = TRUE WHERE chart_type = $2 AND chart_date = $3`,
       [JSON.stringify(songArray), genre, chartWeek]
     );
     console.log(JSON.stringify(songArray));
