@@ -19,7 +19,7 @@ export const chartInfo = {
   },
   Alt: {
     name: "Alternative",
-    firstChart: "October 20, 1958",
+    firstChart: "September 10, 1988",
     info: "The week's most popular alternative songs ranked by radio airplay.",
     link: "https://www.billboard.com/charts/alternative-airplay/",
   },

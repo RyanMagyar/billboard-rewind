@@ -294,7 +294,7 @@ function App() {
             </a>
           ) : null}
         </div>
-        <div className="w-[300px]">
+        <div className="w-[350px] md:w-[400px]">
           {songsNotFound ? (
             <Table>
               <TableCaption className="text-red-400">
