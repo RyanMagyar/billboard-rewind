@@ -1,8 +1,15 @@
 const { removeUnmatchedBrackets, getNextSaturday } = require("./helpers");
+const {
+  selectChart,
+  selectSong,
+  insertSong,
+  insertChart,
+} = require("./databaseHelper");
 const querystring = require("querystring");
 require("dotenv").config();
 
 const db = require("../db");
+const { isTemplateMiddleOrTemplateTail } = require("typescript");
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -63,8 +70,11 @@ async function searchTracks(songArray, token, date, genre) {
   console.log(`Songs array length: ${songArray.length}`);
   console.log(`Checking cache for chart: ${genre} on ${chartWeek}`);
 
+  /*
   const chartQuery = `SELECT * FROM charts WHERE chart_type = $1 AND chart_date = $2`;
   const chartResult = await db.query(chartQuery, [genre, chartWeek]);
+  */
+  const chartResult = await selectChart(genre, chartWeek);
 
   if (chartResult.rows.length > 0) {
     const chart = chartResult.rows[0];
@@ -102,8 +112,12 @@ async function searchTracks(songArray, token, date, genre) {
       .trim();
 
     console.log(`Checking song cache: ${title} by ${artist}`);
+    /*
     const songQuery = `SELECT * FROM songs WHERE title ILIKE $1 AND artist ILIKE $2`;
     const songResult = await db.query(songQuery, [title, artist]);
+    */
+
+    const songResult = await selectSong(title, artist);
 
     if (songResult.rows.length > 0) {
       console.log("CACHE HIT");
@@ -189,10 +203,13 @@ async function searchTracks(songArray, token, date, genre) {
         song.spotifyURI = spotifyURI;
 
         // Store the new song in the database
+        /*
         await db.query(
           `INSERT INTO songs (title, artist, spotify_uri) VALUES ($1, $2, $3) ON CONFLICT (title, artist) DO NOTHING`,
           [title, artist, spotifyURI]
         );
+        */
+        await insertSong(title, artist, spotifyURI);
       } catch (error) {
         console.log(error);
         failedArray.push({ title, artist, rank });
@@ -200,11 +217,13 @@ async function searchTracks(songArray, token, date, genre) {
         console.log(
           `Couldn't add track: ${title} | Artist: ${artist} | Rank: ${rank}`
         );
-
+        /*
         await db.query(
           `INSERT INTO songs (title, artist) VALUES ($1, $2) ON CONFLICT (title, artist) DO NOTHING`,
           [title, artist]
         );
+        */
+        await insertSong(title, artist);
       }
       //break;
     }
@@ -212,6 +231,8 @@ async function searchTracks(songArray, token, date, genre) {
 
   console.log("Updating DB chart with Spotify data.");
 
+  await insertChart(chartResult.rows.length, songArray, genre, chartWeek, true);
+  /*
   if (chartResult.rows.length > 0) {
     await db.query(
       `UPDATE charts SET songs = $1, spotify_data_filled = TRUE WHERE chart_type = $2 AND chart_date = $3`,
@@ -225,7 +246,7 @@ async function searchTracks(songArray, token, date, genre) {
     );
     //console.log(JSON.stringify(songArray, null, 2));
   }
-
+*/
   //console.log(JSON.stringify(songArray, null, 2));
   console.log("Returning from searchTracks");
   return { uriArray, failedArray };
