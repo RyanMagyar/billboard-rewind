@@ -133,7 +133,7 @@ const rockData1 = [
   },
   {
     rank: 12,
-    title: "96 TEARS",
+    title: "96 Tears",
     artist: "Garland Jeffreys",
     cover:
       "https://charts-static.billboard.com/img/1981/03/garland-jeffreys-x1z-180x180.jpg",
@@ -253,7 +253,7 @@ const rockData1 = [
   },
   {
     rank: 22,
-    title: "MESSAGE OF LOVE",
+    title: "Message Of Love",
     artist: "Pretenders",
     cover:
       "https://charts-static.billboard.com/img/1980/01/pretenders-ozt-180x180.jpg",
@@ -484,7 +484,7 @@ const rockData1 = [
 const firstLatinResult = [
   {
     rank: 1,
-    title: "Yo no se que me paso",
+    title: "Yo No Se Que Me Paso",
     artist: "Juan Gabriel",
     cover:
       "https://charts-static.billboard.com/img/1977/12/juan-gabriel-coe-180x180.jpg",
@@ -496,7 +496,7 @@ const firstLatinResult = [
   },
   {
     rank: 2,
-    title: "La guirnalda",
+    title: "La Guirnalda",
     artist: "Rocio Durcal",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -508,7 +508,7 @@ const firstLatinResult = [
   },
   {
     rank: 3,
-    title: "Toda la vida",
+    title: "Toda La Vida",
     artist: "Emmanuel",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -520,7 +520,7 @@ const firstLatinResult = [
   },
   {
     rank: 4,
-    title: "Toda la vida",
+    title: "Toda La Vida",
     artist: "Franco",
     cover:
       "https://charts-static.billboard.com/img/1986/09/franco-aje-180x180.jpg",
@@ -532,7 +532,7 @@ const firstLatinResult = [
   },
   {
     rank: 5,
-    title: "Hasta cuando",
+    title: "Hasta Cuando",
     artist: "Beatriz Adriana",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -544,7 +544,7 @@ const firstLatinResult = [
   },
   {
     rank: 6,
-    title: "Solo el y yo",
+    title: "Solo El Y Yo",
     artist: "Pandora",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -556,7 +556,7 @@ const firstLatinResult = [
   },
   {
     rank: 7,
-    title: "De corazon a corazon",
+    title: "De Corazon A Corazon",
     artist: "Roberto Carlos",
     cover:
       "https://charts-static.billboard.com/img/1986/09/roberto-carlos-bf2-106x106.jpg",
@@ -616,7 +616,7 @@ const firstLatinResult = [
   },
   {
     rank: 12,
-    title: "No controles",
+    title: "No Controles",
     artist: "Flans",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -628,7 +628,7 @@ const firstLatinResult = [
   },
   {
     rank: 13,
-    title: "Por ella",
+    title: "Por Ella",
     artist: "El Gran Combo de Puerto Rico",
     cover:
       "https://charts-static.billboard.com/img/1977/12/el-gran-combo-de-puerto-rico-ufy-180x180.jpg",
@@ -640,7 +640,7 @@ const firstLatinResult = [
   },
   {
     rank: 14,
-    title: "Me la estas poniendo dificil",
+    title: "Me La Estas Poniendo Dificil",
     artist: "Camilo Sesto",
     cover:
       "https://charts-static.billboard.com/img/1986/09/camilo-sesto-1uq-180x180.jpg",
@@ -664,7 +664,7 @@ const firstLatinResult = [
   },
   {
     rank: 16,
-    title: "El viejo",
+    title: "El Viejo",
     artist: "Roberto Torres",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -676,7 +676,7 @@ const firstLatinResult = [
   },
   {
     rank: 17,
-    title: "La otra parte de ti",
+    title: "La Otra Parte De Ti",
     artist: "Jorge Muniz",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -688,7 +688,7 @@ const firstLatinResult = [
   },
   {
     rank: 18,
-    title: "No renunciare",
+    title: "No Renunciare",
     artist: "Jorge Rigo",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -700,7 +700,7 @@ const firstLatinResult = [
   },
   {
     rank: 19,
-    title: "Corazon vacio",
+    title: "Corazon Vacio",
     artist: "Los Yonic's",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -712,7 +712,7 @@ const firstLatinResult = [
   },
   {
     rank: 20,
-    title: "Noche tropical",
+    title: "Noche Tropical",
     artist: "Lisa Lopez",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -736,7 +736,7 @@ const firstLatinResult = [
   },
   {
     rank: 22,
-    title: "Tu me quemas",
+    title: "Tu Me Quemas",
     artist: "Luis Angel",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -760,7 +760,7 @@ const firstLatinResult = [
   },
   {
     rank: 24,
-    title: "El engano",
+    title: "El Engano",
     artist: "Erica Buenfil",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -784,7 +784,7 @@ const firstLatinResult = [
   },
   {
     rank: 26,
-    title: "Debajo de aquel arbol",
+    title: "Debajo De Aquel Arbol",
     artist: "Ramon Ayala",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -808,7 +808,7 @@ const firstLatinResult = [
   },
   {
     rank: 28,
-    title: "Nunca cambies",
+    title: "Nunca Cambies",
     artist: "Napoleon",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -832,7 +832,7 @@ const firstLatinResult = [
   },
   {
     rank: 30,
-    title: "Si tu supieras",
+    title: "Si Tu Supieras",
     artist: "La Mafia",
     cover:
       "https://charts-static.billboard.com/img/1986/09/la-mafia-hed-180x180.jpg",
@@ -856,7 +856,7 @@ const firstLatinResult = [
   },
   {
     rank: 32,
-    title: "Simbolo sexual",
+    title: "Simbolo Sexual",
     artist: "Roberto Carlos",
     cover:
       "https://charts-static.billboard.com/img/1986/09/roberto-carlos-bf2-106x106.jpg",
@@ -880,7 +880,7 @@ const firstLatinResult = [
   },
   {
     rank: 34,
-    title: "La suavecita",
+    title: "La Suavecita",
     artist: "Tam y Tex",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -892,7 +892,7 @@ const firstLatinResult = [
   },
   {
     rank: 35,
-    title: "Dame un beso",
+    title: "Dame Un Beso",
     artist: "Yuri",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -904,7 +904,7 @@ const firstLatinResult = [
   },
   {
     rank: 36,
-    title: "Tu me quemas",
+    title: "Tu Me Quemas",
     artist: "Eddie Santiago",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -916,7 +916,7 @@ const firstLatinResult = [
   },
   {
     rank: 37,
-    title: "Me gusta ser sonrisa",
+    title: "Me Gusta Ser Sonrisa",
     artist: "Flans",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -928,7 +928,7 @@ const firstLatinResult = [
   },
   {
     rank: 38,
-    title: "Mi problema",
+    title: "Mi Problema",
     artist: "Marisela",
     cover:
       "https://charts-static.billboard.com/img/1986/09/marisela-0dk-180x180.jpg",
@@ -952,7 +952,7 @@ const firstLatinResult = [
   },
   {
     rank: 40,
-    title: "Adios que te vaya bien",
+    title: "Adios Que Te Vaya Bien",
     artist: "Mario Pintor",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -964,7 +964,7 @@ const firstLatinResult = [
   },
   {
     rank: 41,
-    title: "El muneco",
+    title: "El Muneco",
     artist: "Liberacion",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -976,7 +976,7 @@ const firstLatinResult = [
   },
   {
     rank: 42,
-    title: "Quedate conmigo esta noche",
+    title: "Quedate Conmigo Esta Noche",
     artist: "Rocio Durcal",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",
@@ -1147,7 +1147,7 @@ const firstRockResult = [
   },
   {
     rank: 12,
-    title: "96 TEARS",
+    title: "96 Tears",
     artist: "Garland Jeffreys",
     cover:
       "https://charts-static.billboard.com/img/1981/03/garland-jeffreys-x1z-180x180.jpg",
@@ -1267,7 +1267,7 @@ const firstRockResult = [
   },
   {
     rank: 22,
-    title: "MESSAGE OF LOVE",
+    title: "Message Of Love",
     artist: "Pretenders",
     cover:
       "https://charts-static.billboard.com/img/1980/01/pretenders-ozt-180x180.jpg",
@@ -1546,7 +1546,7 @@ const firstRbResult = [
   },
   {
     rank: 5,
-    title: "Topsy II",
+    title: "Topsy Ii",
     artist: "Cozy Cole",
     cover:
       "https://charts-static.billboard.com/img/1958/08/cozy-cole-ekr-106x106.jpg",
@@ -2389,7 +2389,7 @@ const firstHotResult = [
   },
   {
     rank: 45,
-    title: "Kathy-O",
+    title: "Kathy-o",
     artist: "The Diamonds",
     cover:
       "https://charts-static.billboard.com/img/1958/08/the-diamonds-kda-155x155.jpg",
@@ -3064,7 +3064,7 @@ const firstHotResult = [
 const firstAltResult = [
   {
     rank: 1,
-    title: "Peek-A-Boo",
+    title: "Peek-a-boo",
     artist: "Siouxsie & The Banshees",
     cover:
       "https://www.billboard.com/wp-content/themes/vip/pmc-billboard-2021/assets/public/lazyload-fallback.gif",

@@ -57,9 +57,10 @@ const getChartData = async (req, res) => {
     // Ensure songs have correct ranks
     chart.songs.forEach((song, index) => {
       song.rank = index + 1;
+      // Make capitalization standard
       song.title = song.title
         .toLowerCase()
-        .replace(/\b\w/g, (char) => char.toUpperCase());
+        .replace(/(?:^|\s|\()\w/g, (char) => char.toUpperCase());
     });
 
     console.log("Input date: " + date);

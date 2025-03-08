@@ -14,6 +14,12 @@ const {
 } = require("./chartConstants");
 const { getChart } = require("billboard-top-100");
 const realGetChart = jest.requireActual("billboard-top-100").getChart;
+const { selectChart, insertChart } = require("../utils/databaseHelper");
+
+jest.mock("../utils/databaseHelper", () => ({
+  selectChart: jest.fn(),
+  insertChart: jest.fn(),
+}));
 
 jest.mock("billboard-top-100", () => ({
   getChart: jest.fn(),
@@ -21,6 +27,10 @@ jest.mock("billboard-top-100", () => ({
 
 afterEach(() => {
   jest.restoreAllMocks();
+});
+
+beforeEach(() => {
+  jest.clearAllMocks();
 });
 
 describe("GET /charts/getChart", () => {
@@ -71,11 +81,16 @@ describe("GET /charts/getChart", () => {
 
   test("Should return 400 for Error retrieving chart data", async () => {
     getChart.mockImplementation(realGetChart);
+    selectChart.mockResolvedValue({ rows: [] });
+    insertChart.mockResolvedValue();
+
     const queries = [{ chart: "Rock", date: "2030-01-01" }];
     for (const query of queries) {
       const response = await request(app).get("/charts/getChart").query(query);
 
       expect(response.status).toBe(400);
+      expect(selectChart).toHaveBeenCalledWith("Rock", expect.any(String));
+      expect(insertChart).toHaveBeenCalledTimes(0);
       expect(response.body).toHaveProperty(
         "message",
         "Error retrieving chart data."
@@ -85,20 +100,30 @@ describe("GET /charts/getChart", () => {
 
   test("Should return 200 and correct rock chart data", async () => {
     getChart.mockImplementation(realGetChart);
+    selectChart.mockResolvedValue({ rows: [] });
+    insertChart.mockResolvedValue();
+
     const query = { chart: "Rock", date: "1981-03-21" };
     const response = await request(app).get("/charts/getChart").query(query);
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual(rockData1);
+    expect(selectChart).toHaveBeenCalledWith("Rock", expect.any(String));
+    expect(insertChart).toHaveBeenCalled();
   });
 
   test("Should return 200 and correct rock chart data for first available week", async () => {
     getChart.mockImplementation(realGetChart);
+    selectChart.mockResolvedValue({ rows: [] });
+    insertChart.mockResolvedValue();
+
     const query = { chart: "Rock", date: "1981-03-20" };
     const response = await request(app).get("/charts/getChart").query(query);
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual(firstRockResult);
+    expect(selectChart).toHaveBeenCalledWith("Rock", expect.any(String));
+    expect(insertChart).toHaveBeenCalled();
   });
 
   test("Should return 200 and correct Hot-100 chart data for first available week", async () => {
