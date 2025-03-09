@@ -189,14 +189,17 @@ function App() {
             className="h-[45px] w-[45px] sm:h-[75px] sm:w-[75px]"
             src={vinylLogo}
           />
-          <h1 className="text-[2.0rem] sm:text-[4.5rem] font-semibold text-center">
-            Billboard Rewind
+          <h1 className="text-[2.75rem] sm:text-[4.5rem] font-semibold text-center">
+            Playlist Rewind
           </h1>
         </div>
         <p className="text-center font-semibold mx-auto mt-5 mb-5">
           Connect with
         </p>
         <img className="h-[75px] mx-auto mt-5 mb-10" src={spotifyWhite} />
+      </div>
+      <div className="mx-auto font-semibold text-center mb-4">
+        <p>Select a Billboard chart and a date!</p>
       </div>
       <div className="flex flex-col items-center mx-auto md:w-[500px] w-full space-y-4">
         <div className="flex flex-col sm:flex-row space-y-5 sm:space-y-0 w-full sm:w-[500px] items-center justify-around">
