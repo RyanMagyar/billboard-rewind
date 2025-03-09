@@ -1,8 +1,20 @@
 const { Pool } = require("pg");
-require("dotenv").config({
-  path: process.env.NODE_ENV === "prod" ? ".env.prod" : ".env.dev",
-});
 
+let envPath;
+
+if (process.env.NODE_ENV === "prod") {
+  envPath = ".env.prod";
+} else if (process.env.NODE_ENV === "dev") {
+  envPath = ".env.dev";
+} else if (process.env.NODE_ENV === "test") {
+  envPath = ".env.test";
+} else {
+  throw Error("No NODE_ENV found");
+}
+
+require("dotenv").config({
+  path: envPath,
+});
 /*
 const pool = new Pool({
   user: process.env.POSTGRESQL_USER,
@@ -12,11 +24,10 @@ const pool = new Pool({
   database: process.env.POSTGRESQL_DB,
 });
 */
-
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
-
 module.exports = {
   query: (text, params) => pool.query(text, params),
+  close: () => pool.end(),
 };

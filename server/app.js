@@ -5,10 +5,21 @@ const moment = require("moment");
 var cookieSession = require("cookie-session");
 const cors = require("cors");
 const expAutoSan = require("express-autosanitizer");
-const { transpileModule } = require("typescript");
+
+let envPath;
+
+if (process.env.NODE_ENV === "prod") {
+  envPath = ".env.prod";
+} else if (process.env.NODE_ENV === "dev") {
+  envPath = ".env.dev";
+} else if (process.env.NODE_ENV === "test") {
+  envPath = ".env.test";
+} else {
+  throw Error("No NODE_ENV found");
+}
 
 require("dotenv").config({
-  path: process.env.NODE_ENV === "prod" ? ".env.prod" : ".env.dev",
+  path: envPath,
 });
 const app = express();
 const port = 3000;
