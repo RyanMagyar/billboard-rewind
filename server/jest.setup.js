@@ -2,6 +2,8 @@ const db = require("./db");
 
 beforeAll(async () => {
   await db.query(`
+    DROP TABLE IF EXISTS charts, songs CASCADE;
+    
     CREATE TABLE charts (
   id SERIAL PRIMARY KEY,
   chart_type TEXT NOT NULL,
