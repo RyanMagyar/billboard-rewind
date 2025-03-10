@@ -48,7 +48,7 @@ const chartDates = {
   Rock: "1981-03-22",
   Rap: "1958-10-20",
   Hot: "1958-08-04",
-  Alt: "1988-09-10",
+  Alt: "1988-09-05",
   Pop: "1961-07-17",
   Country: "1958-10-20",
   Latin: "1986-09-15",
@@ -216,7 +216,7 @@ function App() {
                     </h4>
                     <div>
                       <p className="font-small text-small leading-none">
-                        First Chart Date: {chartInfo[chart].firstChart}
+                        First Chart: Week of {chartInfo[chart].firstChart}
                       </p>
                       <p className="my-5 font-small text-small">
                         {" "}

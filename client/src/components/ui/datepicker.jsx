@@ -36,6 +36,8 @@ export function DatePicker({
 }) {
   const [date, setDate] = useState(selectedDate || new Date());
   const [visibleMonth, setVisibleMonth] = useState(selectedDate || new Date());
+  const [isMobile, setIsMobile] = useState(false);
+
   const months = [
     "January",
     "February",
@@ -87,6 +89,14 @@ export function DatePicker({
     // Update parent state whenever the local state changes
     onDateChange(date);
   }, [date, onDateChange]);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   //console.log(years);
   //console.log(startYear);
 
@@ -104,7 +114,13 @@ export function DatePicker({
           {date ? format(date, "PPP") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
+      <PopoverContent
+        className={cn(
+          "w-auto p-0",
+          isMobile &&
+            "fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50"
+        )}
+      >
         <div className="flex justify-between p-2">
           <Select
             onValueChange={handleMonthChange}
@@ -113,7 +129,7 @@ export function DatePicker({
             <SelectTrigger className="w-[110px]">
               <SelectValue placeholder="Month" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="h-[320px]">
               {months.map((month) => (
                 <SelectItem key={month} value={month}>
                   {month}
@@ -128,7 +144,7 @@ export function DatePicker({
             <SelectTrigger className="w-[110px]">
               <SelectValue placeholder="Year" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="h-[320px]">
               {years.map((year) => (
                 <SelectItem key={year} value={year.toString()}>
                   {year}
@@ -147,6 +163,7 @@ export function DatePicker({
           onPrevMonth={handlePrevMonth}
           onNextMonth={handleNextMonth}
           fromDate={new Date(fromDate)}
+          toDate={Date.now()}
         />
       </PopoverContent>
     </Popover>
