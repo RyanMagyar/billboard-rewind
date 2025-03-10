@@ -46,7 +46,7 @@ app.use(expAutoSan.all);
 
 app.use(
   cors({
-    origin: SERVER_URL,
+    origin: CLIENT_URL,
     credentials: true, //
   })
 );

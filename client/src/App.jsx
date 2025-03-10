@@ -297,7 +297,7 @@ function App() {
             </a>
           ) : null}
         </div>
-        <div className="w-[350px] md:w-[400px]">
+        <div className="w-[375px] md:w-[400px]">
           {songsNotFound ? (
             <Table>
               <TableCaption className="text-red-400">
@@ -329,7 +329,7 @@ function App() {
           ) : null}
         </div>
       </div>
-      <div className="w-full overflow-auto mx-auto mb-10">
+      <div className="w-full max-w-full overflow-hidden mx-auto mb-10">
         <div className="flex w-full md:w-[600px] lg:w-[800px] mx-auto justify-center md:justify-end mt-5">
           {isLoggedIn ? (
             <Button
@@ -355,7 +355,7 @@ function App() {
                 : "Please select a date"
               : "Please select a chart"}
           </TableCaption>
-          <TableHeader>
+          <TableHeader className="">
             <TableRow>
               <TableHead className="w-[50px] text-bold text-left">
                 Rank
@@ -363,13 +363,13 @@ function App() {
               {/*<TableHead className="w-[100px"></TableHead>*/}
               <TableHead className="text-bold">Title</TableHead>
               <TableHead className="text-bold">Artist</TableHead>
-              <TableHead className="hidden sm:table-cell w-[100px] text-center text-bold">
+              <TableHead className="hidden sm:table-cell md:w-[50px]  lg:w-[100px] text-center text-bold">
                 Last Week
               </TableHead>
-              <TableHead className="w-[100px] text-center text-bold">
+              <TableHead className="hidden sm:table-cell md:w-[50px] lg:w-[100px] text-center text-bold">
                 Peak Rank
               </TableHead>
-              <TableHead className="w-[100px] text-center text-bold">
+              <TableHead className="md:w-[50px] lg:w-[100px] text-center text-bold">
                 Weeks On
               </TableHead>
             </TableRow>
@@ -394,12 +394,12 @@ function App() {
               chartData.map((song) => (
                 <TableRow key={song.rank}>
                   <TableCell className="font-bold">{song.rank}</TableCell>
-                  <TableCell>{song.title}</TableCell>
-                  <TableCell>{song.artist}</TableCell>
+                  <TableCell className="">{song.title}</TableCell>
+                  <TableCell className="">{song.artist}</TableCell>
                   <TableCell className="hidden sm:table-cell text-center">
                     {song.position.positionLastWeek}
                   </TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="hidden sm:table-cell text-center">
                     {song.position.peakPosition}
                   </TableCell>
                   <TableCell className="text-center">
