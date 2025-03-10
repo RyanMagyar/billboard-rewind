@@ -47,7 +47,11 @@ app.use(expAutoSan.all);
 app.use(
   cors({
     origin: CLIENT_URL,
-    credentials: true, //
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    preflightContinue: false,
+    optionsSuccessStatus: 200,
   })
 );
 
@@ -55,8 +59,9 @@ app.use(
   cookieSession({
     name: "session",
     secret: SECRET,
+    domain: process.env.NODE_ENV === "prod" ? ".chachfilms.com" : "localhost",
     maxAge: 24 * 60 * 60 * 1000,
-    secure: false,
+    secure: process.env.NODE_ENV === "prod" ? true : false,
     httpOnly: true,
   })
 );
