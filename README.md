@@ -1,6 +1,6 @@
 # Playlist Rewind - Spotify Playlist Generator
 
-Playlist Rewind is a site where users can view various [Billboard.com](https://www.billboard.com/) charts for given dates. After connecting a Spotify account users can then convert the given Billboard chart to a Spotify playlist.
+Playlist Rewind is a site where users can view various [Billboard.com](https://www.billboard.com/) charts for given dates. After connecting a Spotify account, users can then convert the given Billboard chart to a Spotify playlist.
 
 The site is currently awaiting approval from Spotify for access to public users.
 
