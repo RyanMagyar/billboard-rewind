@@ -1,7 +1,6 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 const moment = require("moment");
-const { getArtist } = require("./utils/getArtist");
 
 const BILLBOARD_BASE_URL = "http://www.billboard.com";
 const BILLBOARD_ARTIST_URL = `${BILLBOARD_BASE_URL}/artist/`;
@@ -18,7 +17,7 @@ function convertDate(date) {
   return parsedDate.format("YYYY-MM-DD");
 }
 
-async function getMyArtist(name, callback) {
+async function getArtist(name, callback) {
   try {
     let artist = name.replace(/ /g, "-");
     console.log("Artist: " + artist);
@@ -101,20 +100,4 @@ async function getMyArtist(name, callback) {
   }
 }
 
-async function main() {
-  await getArtist("Paul Mccartney", async (error, chart) => {
-    if (error) {
-      console.log("Error retrieving artist");
-    }
-    console.log(chart.songs);
-    console.log(chart);
-  });
-}
-
-main().then(
-  () => process.exit(0),
-  (e) => {
-    console.error(e);
-    process.exit(1);
-  }
-);
+module.exports = { getArtist };
