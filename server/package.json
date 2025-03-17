@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@spotify/web-api-ts-sdk": "^1.2.0",
+    "axios": "^1.8.3",
     "billboard-top-100": "^2.6.5",
     "cookie-session": "^2.1.0",
     "cors": "^2.8.5",
