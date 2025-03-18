@@ -9,17 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
+import { charts } from "../constants";
 import vinylGif from "../assets/vinyl3.gif";
-
-const charts = {
-  Rock: "Rock",
-  Rap: "Hip Hop/R&B",
-  Hot: "Hot-100",
-  Alt: "Alternative",
-  Pop: "Pop",
-  Country: "Country",
-  Latin: "Latin",
-};
 
 function ChartTable({ isLoading, chartData, chart, selectedDate }) {
   return (

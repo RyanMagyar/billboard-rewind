@@ -1,3 +1,23 @@
+export const charts = {
+  Rock: "Rock",
+  Rap: "Hip Hop/R&B",
+  Hot: "Hot-100",
+  Alt: "Alternative",
+  Pop: "Pop",
+  Country: "Country",
+  Latin: "Latin",
+};
+
+export const chartDates = {
+  Rock: "1981-03-22",
+  Rap: "1958-10-20",
+  Hot: "1958-08-04",
+  Alt: "1988-09-05",
+  Pop: "1961-07-17",
+  Country: "1958-10-20",
+  Latin: "1986-09-15",
+};
+
 export const chartInfo = {
   Rock: {
     name: "Rock",
