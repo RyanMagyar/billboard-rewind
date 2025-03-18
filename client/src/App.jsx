@@ -3,7 +3,7 @@ import Header from "./components/Header";
 import ChartSelector from "./components/ChartSelector";
 import PlaylistSection from "./components/PlaylistSection";
 import ChartTable from "./components/ChartTable";
-import { format } from "date-fns";
+import { checkUserSession, fetchChartData, createSpotifyPlaylist } from "./api";
 
 function App() {
   //const [count, setCount] = useState(0);
@@ -17,112 +17,40 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    console.log(import.meta.env.VITE_API_URL);
-    const checkSession = async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/auth/check-session`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setIsLoggedIn(data.hasSession);
-        } else {
-          console.error("Failed to check session:", response.status);
-        }
-      } catch (error) {
-        console.error("Error checking session:", error);
+    const initializeSession = async () => {
+      const sessionResult = await checkUserSession();
+      if (sessionResult.success) {
+        setIsLoggedIn(sessionResult.hasSession);
       }
     };
 
-    checkSession();
+    initializeSession();
   }, []);
 
   const getChartData = async () => {
     console.log("Selected Date:", selectedDate);
     console.log("Selected Chart:", chart);
     setIsLoading(true);
-    try {
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_API_URL
-        }/charts/getChart?date=${encodeURIComponent(
-          format(selectedDate, "yyyy-MM-dd")
-        )}&chart=${encodeURIComponent(chart)}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
 
-      if (!response.ok) {
-        throw new Error("Network response not ok");
-      }
-
-      const data = await response.json();
-      console.log("Chart Data:", data);
-      setChartData(data);
-    } catch (error) {
-      console.error("Error fetching chart data:", error);
-      setChartData([
-        {
-          rank: "",
-          artist: "",
-          title: "Error: No chart data for selected date.",
-          position: {
-            peakPosition: "",
-            positionLastWeek: "",
-            weeksOnChart: "",
-          },
-        },
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
+    const result = await fetchChartData(selectedDate, chart);
+    setChartData(result.success ? result.data : result.data);
+    setIsLoading(false);
   };
 
-  const createSpotifyPlaylist = async () => {
+  const handleCreateSpotifyPlaylist = async () => {
     console.log("Selected Date:", selectedDate);
     console.log("Selected Chart:", chart);
     setPlaylistIsLoading(true);
-    try {
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_API_URL
-        }/playlist/createPlaylist?date=${encodeURIComponent(
-          format(selectedDate, "MM-dd-yyyy")
-        )}&chart=${encodeURIComponent(chart)}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(chartData),
-          credentials: "include",
-        }
-      );
 
-      if (!response.ok) {
-        throw new Error("Network response not ok");
-      }
+    const result = await createSpotifyPlaylist(selectedDate, chart, chartData);
 
-      const data = await response.json();
-      console.log("Playlist Data:", data);
-      setPlaylistUrl(data.playlist.external_urls.spotify);
-      setSongsNotFound(data.failedArray);
-    } catch (error) {
-      console.error("Error fetching playlist data:", error);
-    } finally {
-      setPlaylistIsLoading(false);
+    if (result.success) {
+      setPlaylistUrl(result.playlistUrl);
+      setSongsNotFound(result.songsNotFound);
     }
-  };
 
-  // Make buttons disabled when appropriate
+    setPlaylistIsLoading(false);
+  };
 
   return (
     <>
@@ -142,7 +70,7 @@ function App() {
         songsNotFound={songsNotFound}
         isLoggedIn={isLoggedIn}
         chartData={chartData}
-        createSpotifyPlaylist={createSpotifyPlaylist}
+        createSpotifyPlaylist={handleCreateSpotifyPlaylist}
       />
 
       <ChartTable
