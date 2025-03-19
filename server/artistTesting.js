@@ -43,7 +43,10 @@ async function getMyArtist(name, callback) {
 
     if ($(chartHeadings[1]).find(".artist-stat-1").length > 0) {
       // No.1 Hits
-      chart.numOnes = $(chartHeadings[1]).find(".artist-stat-1").text().trim();
+      chart.numOnes = parseInt(
+        $(chartHeadings[1]).find(".artist-stat-1").text().trim(),
+        10
+      );
       // Top 10 Hits
       chart.topTens = $(chartHeadings[1]).find(".artist-stat-2").text().trim();
       // Songs
@@ -108,6 +111,7 @@ async function main() {
     }
     console.log(chart.songs);
     console.log(chart);
+    console.log(JSON.stringify(chart, null, 2));
   });
 }
 

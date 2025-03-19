@@ -42,11 +42,20 @@ async function getArtist(name, callback) {
 
     if ($(chartHeadings[1]).find(".artist-stat-1").length > 0) {
       // No.1 Hits
-      chart.numOnes = $(chartHeadings[1]).find(".artist-stat-1").text().trim();
+      chart.numOnes = parseInt(
+        $(chartHeadings[1]).find(".artist-stat-1").text().trim(),
+        10
+      );
       // Top 10 Hits
-      chart.topTens = $(chartHeadings[1]).find(".artist-stat-2").text().trim();
+      chart.topTens = parseInt(
+        $(chartHeadings[1]).find(".artist-stat-2").text().trim(),
+        10
+      );
       // Songs
-      chart.numSongs = $(chartHeadings[1]).find(".artist-stat-3").text().trim();
+      chart.numSongs = parseInt(
+        $(chartHeadings[1]).find(".artist-stat-3").text().trim(),
+        10
+      );
 
       // Get all songs in list
       const chartItems = $(".o-chart-results-list-row ");
@@ -67,7 +76,10 @@ async function getArtist(name, callback) {
         );
 
         // Peak
-        song.peak = $(element).find(".c-label").eq(2).text().trim();
+        song.peak = parseInt(
+          $(element).find(".c-label").eq(2).text().trim(),
+          10
+        );
 
         // Peak Date
         song.peakDate = convertDate(
@@ -76,7 +88,10 @@ async function getArtist(name, callback) {
         );
 
         // Weeks On
-        song.weeksOn = $(element).find(".c-label").eq(5).text().trim();
+        song.weeksOn = parseInt(
+          $(element).find(".c-label").eq(5).text().trim(),
+          10
+        );
 
         chart.songs.push(song);
       });

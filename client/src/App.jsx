@@ -5,6 +5,7 @@ import PlaylistSection from "./components/PlaylistSection";
 import ChartTable from "./components/ChartTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { checkUserSession, fetchChartData, createSpotifyPlaylist } from "./api";
+import ArtistSelector from "./components/ArtistSelector";
 
 function App() {
   //const [count, setCount] = useState(0);
@@ -12,6 +13,7 @@ function App() {
   const [chart, setChart] = useState();
   const [chartData, setChartData] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [artist, setArtist] = useState("");
   const [playlistIsLoading, setPlaylistIsLoading] = useState(false);
   const [playlistUrl, setPlaylistUrl] = useState("");
   const [songsNotFound, setSongsNotFound] = useState();
@@ -86,7 +88,18 @@ function App() {
             selectedDate={selectedDate}
           />
         </TabsContent>
-        <TabsContent></TabsContent>
+        <TabsContent value="artist">
+          <ArtistSelector artist={artist} setArtist={setArtist} />
+
+          <PlaylistSection
+            playlistIsLoading={playlistIsLoading}
+            playlistUrl={playlistUrl}
+            songsNotFound={songsNotFound}
+            isLoggedIn={isLoggedIn}
+            chartData={chartData}
+            createSpotifyPlaylist={handleCreateSpotifyPlaylist}
+          />
+        </TabsContent>
       </Tabs>
     </>
   );
