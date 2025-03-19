@@ -3,6 +3,7 @@ import Header from "./components/Header";
 import ChartSelector from "./components/ChartSelector";
 import PlaylistSection from "./components/PlaylistSection";
 import ChartTable from "./components/ChartTable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { checkUserSession, fetchChartData, createSpotifyPlaylist } from "./api";
 
 function App() {
@@ -56,29 +57,37 @@ function App() {
     <>
       <Header />
 
-      <ChartSelector
-        selectedDate={selectedDate}
-        setSelectedDate={setSelectedDate}
-        chart={chart}
-        setChart={setChart}
-        getChartData={getChartData}
-      />
+      <Tabs defaultValue="chart" className="">
+        <TabsList className="grid w-[400px] grid-cols-2 mx-auto mb-5">
+          <TabsTrigger value="chart">Chart</TabsTrigger>
+          <TabsTrigger value="artist">Artist</TabsTrigger>
+        </TabsList>
+        <TabsContent value="chart">
+          <ChartSelector
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+            chart={chart}
+            setChart={setChart}
+            getChartData={getChartData}
+          />
+          <PlaylistSection
+            playlistIsLoading={playlistIsLoading}
+            playlistUrl={playlistUrl}
+            songsNotFound={songsNotFound}
+            isLoggedIn={isLoggedIn}
+            chartData={chartData}
+            createSpotifyPlaylist={handleCreateSpotifyPlaylist}
+          />
 
-      <PlaylistSection
-        playlistIsLoading={playlistIsLoading}
-        playlistUrl={playlistUrl}
-        songsNotFound={songsNotFound}
-        isLoggedIn={isLoggedIn}
-        chartData={chartData}
-        createSpotifyPlaylist={handleCreateSpotifyPlaylist}
-      />
-
-      <ChartTable
-        isLoading={isLoading}
-        chartData={chartData}
-        chart={chart}
-        selectedDate={selectedDate}
-      />
+          <ChartTable
+            isLoading={isLoading}
+            chartData={chartData}
+            chart={chart}
+            selectedDate={selectedDate}
+          />
+        </TabsContent>
+        <TabsContent></TabsContent>
+      </Tabs>
     </>
   );
 }
