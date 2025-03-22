@@ -1,4 +1,5 @@
 const { getChart } = require("billboard-top-100");
+const { getArtist } = require("../utils/getArtist");
 const { getNextSaturday } = require("../utils/helpers");
 const { selectChart, insertChart } = require("../utils/databaseHelper");
 const moment = require("moment");
@@ -77,4 +78,25 @@ const getChartData = async (req, res) => {
   });
 };
 
-module.exports = { getChartData };
+const getArtistData = async (req, res) => {
+  const artistName = req.query.name;
+
+  if (!artistName) {
+    return res.status(400).send({ message: "Missing query params!" });
+  }
+
+  console.log("Getting Artist data for: " + artistName);
+
+  getArtist(artistName, async (error, chart) => {
+    if (error) {
+      console.log(error + " error fetching artist data");
+      return res.status(400).send({ message: "Error retrieving chart data." });
+    }
+
+    console.log("Chart data received.");
+    res.json(chart);
+    return;
+  });
+};
+
+module.exports = { getChartData, getArtistData };
