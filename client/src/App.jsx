@@ -4,7 +4,12 @@ import ChartSelector from "./components/ChartSelector";
 import PlaylistSection from "./components/PlaylistSection";
 import ChartTable from "./components/ChartTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
-import { checkUserSession, fetchChartData, createSpotifyPlaylist } from "./api";
+import {
+  checkUserSession,
+  fetchChartData,
+  fetchArtistData,
+  createSpotifyPlaylist,
+} from "./api";
 //import { testArtistData } from "./constants";
 import ArtistSelector from "./components/ArtistSelector";
 import ArtistTable from "./components/ArtistTable";
@@ -17,7 +22,7 @@ function App() {
   const [chartData, setChartData] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [artist, setArtist] = useState("");
-  const [artistData, setArtistData] = useState(testArtistData);
+  const [artistData, setArtistData] = useState();
   const [playlistIsLoading, setPlaylistIsLoading] = useState(false);
   const [playlistUrl, setPlaylistUrl] = useState("");
   const [songsNotFound, setSongsNotFound] = useState();
@@ -41,6 +46,15 @@ function App() {
 
     const result = await fetchChartData(selectedDate, chart);
     setChartData(result.success ? result.data : result.data);
+    setIsLoading(false);
+  };
+
+  const getArtistData = async () => {
+    console.log("Selected Artist: ", artist);
+    setIsLoading(true);
+
+    const result = await fetchArtistData(artist);
+    setArtistData(result.success ? result.data : result.data);
     setIsLoading(false);
   };
 
@@ -93,7 +107,11 @@ function App() {
           />
         </TabsContent>
         <TabsContent value="artist">
-          <ArtistSelector artist={artist} setArtist={setArtist} />
+          <ArtistSelector
+            artist={artist}
+            setArtist={setArtist}
+            getArtistData={getArtistData}
+          />
 
           <PlaylistSection
             playlistIsLoading={playlistIsLoading}

@@ -63,6 +63,50 @@ export const fetchChartData = async (selectedDate, chart) => {
   }
 };
 
+export const fetchArtistData = async (artist) => {
+  try {
+    const response = await await fetch(
+      `${API_URL}/charts/getArtist?name=${encodeURIComponent(artist)}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Network response not ok");
+    }
+
+    const data = await response.json();
+    return { success: true, data };
+  } catch (error) {
+    console.error("Error fetching chart data:", error);
+    return {
+      success: false,
+      error: error.message,
+      data: {
+        songs: [
+          {
+            title: "Artist not found.",
+            artist: "",
+            debutDate: "",
+            peak: null,
+            peakDate: "",
+            weeksOn: null,
+          },
+        ],
+        artist: "Artist not found.",
+        url: "",
+        numOnes: null,
+        topTens: null,
+        numSongs: null,
+      },
+    };
+  }
+};
+
 export const createSpotifyPlaylist = async (selectedDate, chart, chartData) => {
   try {
     const response = await fetch(

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-function ArtistSelector({ artist, setArtist }) {
+function ArtistSelector({ artist, setArtist, getArtistData }) {
   return (
     <>
       <div>
@@ -16,10 +16,7 @@ function ArtistSelector({ artist, setArtist }) {
             onChange={(e) => setArtist(e.target.value)}
             className={"w-[300px]"}
           />
-          <Button
-            disabled={artist ? false : true}
-            onClick={() => console.log(artist)}
-          >
+          <Button disabled={artist ? false : true} onClick={getArtistData}>
             Get Artist Data
           </Button>
         </div>
