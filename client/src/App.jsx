@@ -10,10 +10,9 @@ import {
   fetchArtistData,
   createSpotifyPlaylist,
 } from "./api";
-//import { testArtistData } from "./constants";
 import ArtistSelector from "./components/ArtistSelector";
 import ArtistTable from "./components/ArtistTable";
-import { testArtistData } from "./constants";
+// import { testArtistData } from "./constants";
 
 function App() {
   //const [count, setCount] = useState(0);

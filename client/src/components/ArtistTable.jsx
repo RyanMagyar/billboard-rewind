@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
+import { format } from "date-fns";
 import vinylGif from "../assets/vinyl3.gif";
 
 function ArtistTable({ artist, artistData, isLoading }) {
@@ -53,10 +54,10 @@ function ArtistTable({ artist, artistData, isLoading }) {
                   <TableCell className="">{song.artist}</TableCell>
                   <TableCell className="text-center">{song.peak}</TableCell>
                   <TableCell className="hidden sm:table-cell text-center">
-                    {song.debutDate}
+                    {format(song.debutDate, "MM-dd-yyyy")}
                   </TableCell>
                   <TableCell className="hidden sm:table-cell text-center">
-                    {song.peakDate}
+                    {format(song.peakDate, "MM-dd-yyyy")}
                   </TableCell>
                   <TableCell className="text-center">{song.weeksOn}</TableCell>
                 </TableRow>
