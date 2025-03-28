@@ -12,21 +12,6 @@ async function createPlaylistHandler(req, res) {
     return res.status(402).send("Error No Access Token");
   }
 
-  const chart = req.query.chart;
-  const date = req.query.date;
-
-  if (!chart || !date) {
-    return res.status(400).send({
-      message: "Missing query params!",
-    });
-  }
-
-  if (!moment(date, "MM-DD-YYYY", true).isValid()) {
-    return res.status(400).send({
-      message: "Improper date format.",
-    });
-  }
-
   if (Date.now() > req.session.expires_at) {
     console.log("/createPlaylist refreshing token");
     const tokenRes = await refreshToken(req);
@@ -37,9 +22,41 @@ async function createPlaylistHandler(req, res) {
     }
   }
 
+  const { chart, date, artist } = req.query;
+
+  const hasChartAndDate = chart && date;
+  const hasArtist = artist;
+
+  if (!(hasChartAndDate || hasArtist)) {
+    return res.status(400).json({
+      error: "Invalid parameters. Provide either (chart and date) or artist.",
+    });
+  }
+
+  if (hasChartAndDate && hasArtist) {
+    return res.status(400).json({
+      error: "Cannot provide both chart/date and artist. Choose one method.",
+    });
+  }
+
+  let songArray = [];
+
+  if (hasChartAndDate) {
+    if (!moment(date, "MM-DD-YYYY", true).isValid()) {
+      return res.status(400).send({
+        message: "Improper date format.",
+      });
+    }
+
+    songArray = req.body.map((item) => ({
+      ...item,
+      debutDate: date,
+    }));
+  }
+
   console.log("Processing Playlist Creation...");
 
-  const songArray = req.body;
+  //const songArray = req.body;
   const token = req.session.access_token;
 
   const myDate = moment(date, "MM-DD-YYYY").format("YYYY-MM-DD");
@@ -48,7 +65,22 @@ async function createPlaylistHandler(req, res) {
   const uriArray = songsObj.uriArray;
   const failedArray = songsObj.failedArray;
 
-  const createdPlaylist = await createPlaylist(uriArray, chart, date, token);
+  let playlistName;
+  if (artist) {
+    playlistName = `Top Tracks from ${artist}`;
+  } else {
+    const charts = {
+      Rock: "Rock",
+      Rap: "Hip Hop/R&B",
+      Hot: "Hot-100",
+      Alt: "Alternative",
+      Pop: "Pop",
+      Country: "Country",
+      Latin: "Latin",
+    };
+    playlistName = `Top ${charts[chart]} Tracks ${date}`;
+  }
+  const createdPlaylist = await createPlaylist(uriArray, playlistName, token);
 
   return res.json({ playlist: createdPlaylist, failedArray: failedArray });
 }

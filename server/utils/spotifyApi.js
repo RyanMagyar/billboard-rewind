@@ -27,7 +27,7 @@ async function fetchWebApi(endpoint, method, token, body) {
   return await res.json();
 }
 
-async function createPlaylist(uriArray, chart, date, token) {
+async function createPlaylist(uriArray, playlistName, token) {
   const { id: user_id } = await fetchWebApi("v1/me", "GET", token);
 
   const charts = {
@@ -45,7 +45,7 @@ async function createPlaylist(uriArray, chart, date, token) {
     "POST",
     token,
     {
-      name: `Top ${charts[chart]} Tracks ${date}`,
+      name: playlistName,
       description: "Playlist created by Billboard Rewind",
       public: false,
     }
@@ -64,44 +64,49 @@ async function searchTracks(songArray, token, date, genre) {
   let uriArray = [];
   let failedArray = [];
 
-  const year = date.split("-")[0];
-  const chartWeek = getNextSaturday(date);
+  let chartResult;
+  let chartWeek;
 
-  console.log(`Songs array length: ${songArray.length}`);
-  console.log(`Checking cache for chart: ${genre} on ${chartWeek}`);
+  if (genre) {
+    const chartWeek = getNextSaturday(date);
+    console.log(`Songs array length: ${songArray.length}`);
+    console.log(`Checking cache for chart: ${genre} on ${chartWeek}`);
 
-  const chartResult = await selectChart(genre, chartWeek);
+    chartResult = await selectChart(genre, chartWeek);
 
-  if (chartResult.rows.length > 0) {
-    const chart = chartResult.rows[0];
+    if (chartResult.rows.length > 0) {
+      const chart = chartResult.rows[0];
 
-    // If chart has Spotify data, parse it
-    if (chart.spotify_data_filled) {
-      console.log("Chart found in cache with Spotify data.");
+      // If chart has Spotify data, parse it
+      if (chart.spotify_data_filled) {
+        console.log("Chart found in cache with Spotify data.");
 
-      let cachedSongs = chart.songs;
-      cachedSongs.forEach((song) => {
-        if (song.spotifyURI) {
-          uriArray.push(song.spotifyURI);
-        } else {
-          failedArray.push({
-            title: song.title,
-            artist: song.artist,
-            rank: song.rank,
-          });
-        }
-      });
+        let cachedSongs = chart.songs;
+        cachedSongs.forEach((song) => {
+          if (song.spotifyURI) {
+            uriArray.push(song.spotifyURI);
+          } else {
+            failedArray.push({
+              title: song.title,
+              artist: song.artist,
+              rank: song.rank,
+            });
+          }
+        });
 
-      return { uriArray, failedArray };
+        return { uriArray, failedArray };
+      }
+
+      console.log("Chart found in cache but missing Spotify data.");
+    } else {
+      console.log("Chart not found in cache.");
     }
-
-    console.log("Chart found in cache but missing Spotify data.");
-  } else {
-    console.log("Chart not found in cache.");
   }
 
   for (const song of songArray) {
     let { artist, title, rank } = song;
+    console.log(song);
+    let year = song.debutDate.split("-")[2];
     let track = removeUnmatchedBrackets(title)
       .replace(/\s*\(.*?\)\s*/g, "")
       .replace(/\s*\{.*?\}\s*/g, "")
@@ -209,9 +214,17 @@ async function searchTracks(songArray, token, date, genre) {
     }
   }
 
-  console.log("Updating DB chart with Spotify data.");
+  if (genre) {
+    console.log("Updating DB chart with Spotify data.");
 
-  await insertChart(chartResult.rows.length, songArray, genre, chartWeek, true);
+    await insertChart(
+      chartResult.rows.length,
+      songArray,
+      genre,
+      chartWeek,
+      true
+    );
+  }
 
   //console.log(JSON.stringify(songArray, null, 2));
   console.log("Returning from searchTracks");
