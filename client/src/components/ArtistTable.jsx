@@ -79,7 +79,7 @@ function ArtistTable({ artist, artistData, isLoading }) {
 
   return (
     <div className="w-full max-w-full overflow-hidden mx-auto mb-10">
-      <Table className="w-full md:w-[600px] lg:w-[900px] mx-auto">
+      <Table className="w-full md:w-[600px] lg:w-[950px] mx-auto">
         <TableCaption className="pt-5">
           {artist ? `Chart history for ${artist}` : "Please choose an artist"}
         </TableCaption>
@@ -99,20 +99,26 @@ function ArtistTable({ artist, artistData, isLoading }) {
                 key: "peakDate",
                 label: "Peak Date",
                 className:
-                  "hidden sm:table-cell md:w-[50px] lg:w-[100px] text-center text-bold",
+                  "flex items-center hidden sm:table-cell md:w-[50px] lg:w-[120px] text-center text-bold",
               },
               {
                 key: "weeksOn",
                 label: "Weeks On",
-                className: "md:w-[50px] lg:w-[100px] text-center text-bold",
+                className: "md:w-[50px] lg:w-[120px] text-center text-bold",
               },
             ].map(({ key, label, className = "" }) => (
               <TableHead
                 key={key}
-                className={`${className} cursor-pointer hover:bg-accent`}
+                className={`${className} cursor-pointer hover:bg-accent text-center`}
                 onClick={() => handleSort(key)}
               >
-                <div className="flex items-center">
+                <div
+                  className={`flex items-center ${
+                    ["peak", "debutDate", "peakDate", "weeksOn"].includes(key)
+                      ? "justify-center"
+                      : ""
+                  }`}
+                >
                   {label}
                   {getSortIcon(key)}
                 </div>
