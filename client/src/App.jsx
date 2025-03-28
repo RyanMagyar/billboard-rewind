@@ -111,6 +111,7 @@ function App() {
             isLoggedIn={isLoggedIn}
             chartData={chartData}
             createSpotifyPlaylist={handleCreateSpotifyPlaylist}
+            tab="chart"
           />
 
           <ChartTable
@@ -134,6 +135,7 @@ function App() {
             isLoggedIn={isLoggedIn}
             chartData={artistData}
             createSpotifyPlaylist={handleCreateSpotifyArtistPlaylist}
+            tab="artist"
           />
 
           <ArtistTable
