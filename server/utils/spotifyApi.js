@@ -106,7 +106,7 @@ async function searchTracks(songArray, token, date, genre) {
   for (const song of songArray) {
     let { artist, title, rank } = song;
     console.log(song);
-    let year = song.debutDate.split("-")[2];
+    let year = song.debutDate.split("-")[0];
     let track = removeUnmatchedBrackets(title)
       .replace(/\s*\(.*?\)\s*/g, "")
       .replace(/\s*\{.*?\}\s*/g, "")

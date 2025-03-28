@@ -9,6 +9,7 @@ import {
   fetchChartData,
   fetchArtistData,
   createSpotifyPlaylist,
+  createSpotifyArtistPlaylist,
 } from "./api";
 import ArtistSelector from "./components/ArtistSelector";
 import ArtistTable from "./components/ArtistTable";
@@ -72,6 +73,20 @@ function App() {
     setPlaylistIsLoading(false);
   };
 
+  const handleCreateSpotifyArtistPlaylist = async () => {
+    console.log("Selected Artist:", artist);
+    setPlaylistIsLoading(true);
+
+    const result = await createSpotifyArtistPlaylist(artist, artistData);
+
+    if (result.success) {
+      setPlaylistUrl(result.playlistUrl);
+      setSongsNotFound(result.songsNotFound);
+    }
+
+    setPlaylistIsLoading(false);
+  };
+
   return (
     <>
       <Header />
@@ -117,8 +132,8 @@ function App() {
             playlistUrl={playlistUrl}
             songsNotFound={songsNotFound}
             isLoggedIn={isLoggedIn}
-            chartData={chartData}
-            createSpotifyPlaylist={handleCreateSpotifyPlaylist}
+            chartData={artistData}
+            createSpotifyPlaylist={handleCreateSpotifyArtistPlaylist}
           />
 
           <ArtistTable

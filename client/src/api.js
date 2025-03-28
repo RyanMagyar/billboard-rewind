@@ -138,3 +138,33 @@ export const createSpotifyPlaylist = async (selectedDate, chart, chartData) => {
     return { success: false, error: error.message };
   }
 };
+
+export const createSpotifyArtistPlaylist = async (artist, artistData) => {
+  try {
+    const response = await fetch(
+      `${API_URL}/playlist/createPlaylist?artist=${encodeURIComponent(artist)}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(artistData),
+        credentials: "include",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Network response not ok");
+    }
+
+    const data = await response.json();
+    return {
+      success: true,
+      playlistUrl: data.playlist.external_urls.spotify,
+      songsNotFound: data.failedArray,
+    };
+  } catch (error) {
+    console.error("Error creating playlist:", error);
+    return { success: false, error: error.message };
+  }
+};

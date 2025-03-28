@@ -47,15 +47,17 @@ async function createPlaylistHandler(req, res) {
         message: "Improper date format.",
       });
     }
-
+    let songDate = moment(date, "MM-DD-YYYY").format("YYYY-MM-DD");
     songArray = req.body.map((item) => ({
       ...item,
-      debutDate: date,
+      debutDate: songDate,
     }));
+  } else {
+    songArray = req.body.songs;
   }
 
   console.log("Processing Playlist Creation...");
-
+  console.log(songArray);
   //const songArray = req.body;
   const token = req.session.access_token;
 
