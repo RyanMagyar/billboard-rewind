@@ -20,7 +20,6 @@ function PlaylistSection({
   createSpotifyPlaylist,
   tab,
 }) {
-  console.log(songsNotFound);
   return (
     <>
       <div className="flex flex-col items-center mx-auto md:w-[500px] w-full">
@@ -49,11 +48,9 @@ function PlaylistSection({
 
               <TableHeader>
                 <TableRow>
-                  {tab === "chart" ? (
-                    <TableHead className="w-[50px] text-bold text-left">
-                      Rank
-                    </TableHead>
-                  ) : null}
+                  <TableHead className="w-[50px] text-bold text-left">
+                    {tab === "chart" ? "Rank" : "Peak"}
+                  </TableHead>
                   <TableHead className="text-bold">Title</TableHead>
                   <TableHead className="text-bold">Artist</TableHead>
                   <TableHead></TableHead>
@@ -64,9 +61,7 @@ function PlaylistSection({
                 {songsNotFound &&
                   songsNotFound.map((song) => (
                     <TableRow key={song.title}>
-                      {tab === "chart" ? (
-                        <TableCell className="font-bold">{song.rank}</TableCell>
-                      ) : null}
+                      <TableCell className="font-bold">{song.rank}</TableCell>
                       <TableCell>{song.title}</TableCell>
                       <TableCell>{song.artist}</TableCell>
                     </TableRow>

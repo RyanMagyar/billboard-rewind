@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import ChartSelector from "./components/ChartSelector";
 import PlaylistSection from "./components/PlaylistSection";
+import Footer from "./components/Footer";
 import ChartTable from "./components/ChartTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import {
@@ -145,6 +146,7 @@ function App() {
           />
         </TabsContent>
       </Tabs>
+      <Footer></Footer>
     </>
   );
 }
