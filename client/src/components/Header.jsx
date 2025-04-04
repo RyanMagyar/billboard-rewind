@@ -15,7 +15,7 @@ function Header() {
           </h1>
         </div>
         <p className="text-center font-semibold mx-auto mt-5 mb-5">
-          Connect with
+          connect with
         </p>
         <img className="h-[75px] mx-auto mt-5 mb-10" src={spotifyWhite} />
       </div>
