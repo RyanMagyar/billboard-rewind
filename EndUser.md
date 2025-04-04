@@ -1,37 +1,46 @@
-End User Agreement (Terms of Service)
+# End User Agreement (Terms of Service)
 
 Last Updated: April 4, 2025
 
 Welcome to Playlist Rewind! By using our service, you agree to comply with the following terms. If you do not agree, please do not use our service.
 
-1. Description of Service
+---
 
-Playlist Rewind allows users to generate Spotify playlists based on historical Billboard chart data. Our app scrapes publicly available Billboard charts and matches songs to Spotify’s catalog to create playlists.
+## 1. Description of Service
 
-2. User Responsibilities
+Playlist Rewind allows users to generate Spotify playlists based on historical Billboard chart data.  
+Our app scrapes publicly available Billboard charts and matches songs to Spotify’s catalog to create playlists.
 
-You must have a valid Spotify account to use Playlist Rewind.
+---
 
-You agree to use this service only for personal, non-commercial purposes.
+## 2. User Responsibilities
 
-You will not misuse the service, attempt to reverse-engineer it, or exploit it in a way that violates Spotify’s terms of service or copyright laws.
+- You must have a valid Spotify account to use Playlist Rewind.
+- You agree to use this service only for personal, non-commercial purposes.
+- You will not misuse the service, attempt to reverse-engineer it, or exploit it in a way that violates Spotify’s terms of service or copyright laws.
+- You acknowledge that playlist accuracy may vary due to song availability on Spotify.
 
-You acknowledge that playlist accuracy may vary due to song availability on Spotify.
+---
 
-3. Third-Party Services
+## 3. Third-Party Services
 
-Playlist Rewind integrates with the Spotify Web API to create playlists.
+- Playlist Rewind integrates with the Spotify Web API to create playlists.
+- We do not store any Spotify user data beyond what is necessary for authentication and playlist creation.
 
-We do not store any Spotify user data beyond what is necessary for authentication and playlist creation.
+---
 
-4. Disclaimers & Limitation of Liability
+## 4. Disclaimers & Limitation of Liability
 
-We do not guarantee the accuracy or availability of songs on Spotify.
+- We do not guarantee the accuracy or availability of songs on Spotify.
+- Playlist Rewind is not affiliated with Spotify or Billboard.
+- We are not responsible for any disruptions, data loss, or changes to Spotify’s API that may affect the app’s functionality.
 
-Playlist Rewind is not affiliated with Spotify or Billboard.
+---
 
-We are not responsible for any disruptions, data loss, or changes to Spotify’s API that may affect the app’s functionality.
-
-5. Termination
+## 5. Termination
 
 We reserve the right to suspend or terminate your access to Playlist Rewind at any time if you violate these terms.
+
+---
+
+Thank you for using Playlist Rewind! 🎵
