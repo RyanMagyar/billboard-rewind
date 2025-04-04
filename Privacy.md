@@ -40,8 +40,7 @@ This Privacy Policy explains how Playlist Rewind collects, uses, and protects yo
 
 ## 5. User Rights
 
-- You may revoke Playlist Rewind’s access to your Spotify account at any time via your Spotify settings.
-- If you have questions about your data, contact us at [your contact email].
+- You may revoke Playlist Rewind’s access to your Spotify account at any time via your [Spotify settings](https://www.spotify.com/account/apps/) by selecting "Remove Access" for Playlist Rewind.
 
 ---
 
