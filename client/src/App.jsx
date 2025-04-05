@@ -93,7 +93,7 @@ function App() {
       <Header />
 
       <Tabs defaultValue="chart" className="">
-        <TabsList className="grid w-[400px] grid-cols-2 mx-auto mb-5">
+        <TabsList className="grid w-[100vw] sm:w-[400px] grid-cols-2 mx-auto mb-5">
           <TabsTrigger value="chart">Chart</TabsTrigger>
           <TabsTrigger value="artist">Artist</TabsTrigger>
         </TabsList>
