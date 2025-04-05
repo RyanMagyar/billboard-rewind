@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import ConnectButton from "./ConnectButton";
 import { Button } from "./ui/button";
 import { LoadingSpinner } from "./ui/design/loadingspinner";
 import {
@@ -81,9 +82,7 @@ function PlaylistSection({
               Create Playlist
             </Button>
           ) : (
-            <a href={`${import.meta.env.VITE_API_URL}/auth/login`}>
-              <Button>Connect to Spotify</Button>
-            </a>
+            <ConnectButton />
           )}
         </div>
       </div>

@@ -44,7 +44,3 @@ This Privacy Policy explains how Playlist Rewind collects, uses, and protects yo
 ## 6. Your Agreement
 
 Your use of Playlist Rewind is subject to this Privacy Policy. By using the service, you acknowledge and consent to the practices described here.
-
----
-
-Thank you for using Playlist Rewind! 🎵

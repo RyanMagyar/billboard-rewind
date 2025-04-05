@@ -28,7 +28,7 @@ Our app scrapes publicly available Billboard charts and matches songs to Spotify
 - Billboard chart data is used for playlist generation.
 - We do not make any warranties or representations on behalf of Spotify.
 - Playlist Rewind is not affiliated with Spotify or Billboard.
-- Spotify is a third part beneficiary of this agreement and is entitled to enforce it and our privacy policy.
+- Spotify is a third party beneficiary of this agreement and is entitled to enforce it and our privacy policy.
 
 ---
 
