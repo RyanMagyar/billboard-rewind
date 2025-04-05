@@ -3,7 +3,7 @@ const Footer = () => {
     <div className="w-[100%]">
       <div className="flex justify-center mb-5">
         <a
-          className="hover:underline"
+          className="hover:underline text-center"
           target="_blank"
           href="https://www.spotify.com/account/apps/"
         >
@@ -13,7 +13,7 @@ const Footer = () => {
         <a
           href="https://github.com/RyanMagyar/billboard-rewind/blob/master/EndUser.md"
           target="_blank"
-          className="hover:underline"
+          className="hover:underline text-center"
         >
           End User Agreement
         </a>
@@ -21,7 +21,7 @@ const Footer = () => {
         <a
           href="https://github.com/RyanMagyar/billboard-rewind/blob/master/Privacy.md"
           target="_blank"
-          className="hover:underline"
+          className="hover:underline text-center"
         >
           Privacy Policy
         </a>
