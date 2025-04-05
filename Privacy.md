@@ -1,49 +1,50 @@
 # Privacy Policy
 
-Last Updated: April 4, 2025
+**Last Updated: April 4, 2025**
 
-This Privacy Policy explains how Playlist Rewind collects, uses, and protects your information when you use our service.
+This Privacy Policy explains how Playlist Rewind collects, uses, and protects your information when you use our service. By using Playlist Rewind, you agree to the collection and use of information in accordance with this policy.
 
 ---
 
 ## 1. Information We Collect
 
-- **Spotify Account Data**: When you log in with Spotify, we request permission to create playlists on your behalf. We do not store your login credentials.
-- **Usage Data**: We may collect anonymous usage statistics to improve our service.
-- **Cookies**: We use cookies to store authentication and refresh tokens for maintaining user sessions.
+- **Spotify Account Data**: When you log in with Spotify, we request permission to create playlists on your behalf via the Spotify Web API.
+- **Authentication Tokens**: We temporarily store your Spotify authentication and refresh tokens in browser cookies to manage your session.
 
 ---
 
 ## 2. How We Use Your Information
 
 - To generate and save playlists to your Spotify account.
-- To improve app functionality based on usage patterns.
-- To maintain user sessions through authentication cookies.
-- We do not sell, share, or store your data beyond what is necessary to provide the service.
+- To maintain user sessions using cookies.
 
 ---
 
-## 3. Third-Party Services
+## 3. Cookies
 
-- Playlist Rewind interacts with Spotify’s Web API, which is governed by Spotify’s privacy policy.
-- Billboard chart data is retrieved but not stored or shared.
-
----
-
-## 4. Security
-
-- We implement industry-standard security measures to protect your data.
-- Cookies are only used for authentication and session management and are not shared with third parties.
-- Since we do not store user data, risk is minimized.
+- We use cookies strictly to store temporary authentication and refresh tokens.
+- We **do not** allow third parties to place cookies or track user activity across other websites.
+- Users can manage or clear cookies at any time through their browser settings.
 
 ---
 
-## 5. User Rights
+## 4. Information Sharing
 
-- You may revoke Playlist Rewind’s access to your Spotify account at any time via your [Spotify settings](https://www.spotify.com/account/apps/) by selecting "Remove Access" for Playlist Rewind.
+- We do **not** sell or share your personal information with third parties.
+- We only interact with Spotify’s Web API to facilitate playlist creation.
 
 ---
 
-By using Playlist Rewind, you acknowledge and agree to this Privacy Policy and our End User Agreement.
+## 5. User Rights and Contact Information
+
+- You may revoke Playlist Rewind’s access to your Spotify account at any time via your [Spotify App Permissions](https://www.spotify.com/account/apps/) page.
+
+---
+
+## 6. Your Agreement
+
+Your use of Playlist Rewind is subject to this Privacy Policy. By using the service, you acknowledge and consent to the practices described here.
+
+---
 
 Thank you for using Playlist Rewind! 🎵

@@ -1,6 +1,6 @@
 # End User Agreement (Terms of Service)
 
-Last Updated: April 4, 2025
+**Last Updated: April 4, 2025**
 
 Welcome to Playlist Rewind! By using our service, you agree to comply with the following terms. If you do not agree, please do not use our service.
 
@@ -18,29 +18,23 @@ Our app scrapes publicly available Billboard charts and matches songs to Spotify
 - You must have a valid Spotify account to use Playlist Rewind.
 - You agree to use this service only for personal, non-commercial purposes.
 - You will not misuse the service, attempt to reverse-engineer it, or exploit it in a way that violates Spotify’s terms of service or copyright laws.
-- You acknowledge that playlist accuracy may vary due to song availability on Spotify.
+- You acknowledge that playlist accuracy may vary depending on song availability on Spotify.
 
 ---
 
 ## 3. Third-Party Services
 
 - Playlist Rewind integrates with the Spotify Web API to create playlists.
-- We do not store any Spotify user data beyond what is necessary for authentication and playlist creation.
-
----
-
-## 4. Disclaimers & Limitation of Liability
-
-- We do not guarantee the accuracy or availability of songs on Spotify.
+- Billboard chart data is used for playlist generation.
+- We do not make any warranties or representations on behalf of Spotify.
 - Playlist Rewind is not affiliated with Spotify or Billboard.
-- We are not responsible for any disruptions, data loss, or changes to Spotify’s API that may affect the app’s functionality.
+- Spotify is a third part beneficiary of this agreement and is entitled to enforce it and our privacy policy.
 
 ---
 
-## 5. Termination
+## 4. Restrictions
 
-We reserve the right to suspend or terminate your access to Playlist Rewind at any time if you violate these terms.
+By using Playlist Rewind, you agree that you will not:
 
----
-
-Thank you for using Playlist Rewind! 🎵
+- Modify or create derivative works based on the Spotify Platform, Spotify Service, or Spotify Content.
+- Decompile, reverse-engineer, disassemble, or otherwise attempt to derive the source code of the Spotify Platform
