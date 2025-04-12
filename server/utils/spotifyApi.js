@@ -10,11 +10,35 @@ require("dotenv").config();
 
 const db = require("../db");
 const { isTemplateMiddleOrTemplateTail } = require("typescript");
+const e = require("express");
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
+
+function normalize(str) {
+  return str
+    ?.toLowerCase()
+    .replace(/[^\w\s]/gi, "") // remove punctuation
+    .replace(/\s+/g, " ") // collapse multiple spaces
+    .trim();
+}
+
+function isMatch(resp, track, artist) {
+  const resultTrack = normalize(resp?.tracks?.items?.[0]?.name);
+  const resultArtist = normalize(resp?.tracks?.items?.[0]?.artists?.[0]?.name);
+  const inputTrack = normalize(track);
+  const inputArtist = normalize(artist);
+
+  return (
+    resultTrack?.includes(inputTrack) && resultArtist?.includes(inputArtist)
+  );
+}
+
+function isLiveVersion(resp) {
+  return resp?.tracks?.items?.[0]?.name?.includes(" - Live");
+}
 
 async function fetchWebApi(endpoint, method, token, body) {
   const res = await fetch(`https://api.spotify.com/${endpoint}`, {
@@ -142,59 +166,101 @@ async function searchTracks(songArray, token, date, genre) {
       }`;
       let response = await fetchWebApi(
         `v1/search?q=${encodeURIComponent(
-          query
+          `track:${track} artist:${artist} year:${year - 1}-${Number(year) + 1}`
         )}&type=track&market=US&limit=1&offset=0`,
         "GET",
         token
       );
 
-      let fallback_response = response?.tracks?.items[0]?.name.includes(
-        " - Live"
-      )
-        ? response
-        : null;
+      let fallback_response = null;
 
+      // --- fallback logic ---
+      if (
+        !isMatch(response, track, artist) &&
+        response.tracks.items.length &&
+        !fallback_response
+      ) {
+        console.log("Setting fallback from first query...");
+        fallback_response = JSON.parse(JSON.stringify(response));
+        response.tracks.items.length = 0; // clear for next attempt
+      }
+
+      // --- second attempt ---
       if (!response.tracks.items.length) {
         response = await fetchWebApi(
           `v1/search?q=track:${track} artist:${artist}&type=track&market=US&limit=1&offset=0`,
           "GET",
           token
         );
+
+        if (
+          !isMatch(response, track, artist) &&
+          response.tracks.items.length &&
+          !fallback_response
+        ) {
+          console.log("Setting fallback from second query...");
+          fallback_response = JSON.parse(JSON.stringify(response));
+          response.tracks.items.length = 0;
+        }
       }
 
+      // --- try removing slashes ---
       if (!response.tracks.items.length && track.includes("/")) {
+        const cleanedTrack = track.split("/")[0];
         response = await fetchWebApi(
-          `v1/search?q=track:${
-            track.split("/")[0]
-          } artist:${artist}&type=track&market=US&limit=1&offset=0`,
+          `v1/search?q=track:${cleanedTrack} artist:${artist}&type=track&market=US&limit=1&offset=0`,
           "GET",
           token
         );
+
+        if (
+          !isMatch(response, track, artist) &&
+          response.tracks.items.length &&
+          !fallback_response
+        ) {
+          fallback_response = JSON.parse(JSON.stringify(response));
+          response.tracks.items.length = 0;
+        }
       }
 
+      // --- try with split artists ---
       if (
         !response.tracks.items.length &&
         /(And|With| x |Featuring|Starring)/i.test(artist)
       ) {
-        let splitArtist = artist
+        const splitArtists = artist
           .split(/And|With| x |Featuring|Starring/i)
           .map((a) => a.trim());
 
-        for (const split of splitArtist) {
-          response = await fetchWebApi(
+        for (const split of splitArtists) {
+          const tempResponse = await fetchWebApi(
             `v1/search?q=track:${track} artist:${split}&type=track&market=US&limit=1&offset=0`,
             "GET",
             token
           );
-          if (response.tracks.items.length) break;
+
+          if (tempResponse.tracks.items.length) {
+            if (!isMatch(tempResponse, track, artist)) {
+              if (!fallback_response) {
+                console.log("Setting fallback from split artist...");
+                fallback_response = JSON.parse(JSON.stringify(tempResponse));
+              }
+            } else {
+              response = tempResponse; // First good match — use it and break
+              break;
+            }
+          }
         }
       }
 
+      // --- finally: fallback ---
       if (!response.tracks.items.length && fallback_response) {
+        console.log("No perfect match found. Using fallback...");
         response = fallback_response;
       }
 
       try {
+        //console.log(response.tracks.items[0]);
         const spotifyURI = response.tracks.items[0].uri;
         //console.log(spotifyURI);
         uriArray.push(spotifyURI);

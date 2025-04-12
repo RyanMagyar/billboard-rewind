@@ -78,8 +78,8 @@ function ArtistTable({ artist, artistData, isLoading }) {
   };
 
   return (
-    <div className="w-full max-w-full overflow-hidden mx-auto mb-10">
-      <Table className="w-full md:w-[600px] lg:w-[950px] mx-auto">
+    <div className="w-[100vw] max-w-full overflow-hidden mx-auto mb-10">
+      <Table className="w-[100vw] md:w-[600px] lg:w-[950px] mx-auto">
         <TableCaption className="pt-5">
           {artist ? `Chart history for ${artist}` : "Please choose an artist"}
         </TableCaption>
