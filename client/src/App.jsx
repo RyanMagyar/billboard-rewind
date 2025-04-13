@@ -99,6 +99,7 @@ function App() {
         </TabsList>
         <TabsContent value="chart">
           <ChartSelector
+            isLoading={isLoading}
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
             chart={chart}
@@ -127,6 +128,7 @@ function App() {
             artist={artist}
             setArtist={setArtist}
             getArtistData={getArtistData}
+            isLoading={isLoading}
           />
 
           <PlaylistSection

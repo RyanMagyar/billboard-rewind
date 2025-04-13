@@ -18,6 +18,7 @@ import { chartInfo, charts, chartDates } from "../constants";
 import { format } from "date-fns";
 
 function ChartSelector({
+  isLoading,
   selectedDate,
   setSelectedDate,
   chart,
@@ -107,7 +108,10 @@ function ChartSelector({
             className=""
           />
         </div>
-        <Button disabled={chart ? false : true} onClick={getChartData}>
+        <Button
+          disabled={chart ? (isLoading ? true : false) : true}
+          onClick={getChartData}
+        >
           Get Chart Data
         </Button>
       </div>
