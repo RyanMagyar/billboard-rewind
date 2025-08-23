@@ -1,7 +1,7 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 const moment = require("moment");
-const { getArtist } = require("./utils/getArtist");
+const { getArtist } = require("./utils/billboard-api/getArtist");
 
 const BILLBOARD_BASE_URL = "http://www.billboard.com";
 const BILLBOARD_ARTIST_URL = `${BILLBOARD_BASE_URL}/artist/`;

@@ -144,10 +144,10 @@ function ArtistTable({ artist, artistData, isLoading }) {
                 <TableCell>{song.artist}</TableCell>
                 <TableCell className="text-center">{song.peak}</TableCell>
                 <TableCell className="hidden sm:table-cell text-center">
-                  {format(song.debutDate, "MM-dd-yyyy")}
+                  {song.debutDate ? format(song.debutDate, "MM-dd-yyyy") : ""}
                 </TableCell>
                 <TableCell className="hidden sm:table-cell text-center">
-                  {format(song.peakDate, "MM-dd-yyyy")}
+                  {song.peakDate ? format(song.peakDate, "MM-dd-yyyy") : ""}
                 </TableCell>
                 <TableCell className="text-center">{song.weeksOn}</TableCell>
               </TableRow>

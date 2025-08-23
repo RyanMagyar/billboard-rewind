@@ -82,7 +82,7 @@ export const fetchArtistData = async (artist) => {
     const data = await response.json();
     return { success: true, data };
   } catch (error) {
-    console.error("Error fetching chart data:", error);
+    console.error("Error fetching artist data:", error);
     return {
       success: false,
       error: error.message,
@@ -95,6 +95,7 @@ export const fetchArtistData = async (artist) => {
             peak: null,
             peakDate: "",
             weeksOn: null,
+            rank: 0,
           },
         ],
         artist: "Artist not found.",

@@ -1,5 +1,5 @@
-const { getChart } = require("billboard-top-100");
-const { getArtist } = require("../utils/getArtist");
+const { getChart } = require("../utils/billboard-api/getChart");
+const { getArtist } = require("../utils/billboard-api/getArtist");
 const { getNextSaturday } = require("../utils/helpers");
 const { selectChart, insertChart } = require("../utils/databaseHelper");
 const moment = require("moment");
