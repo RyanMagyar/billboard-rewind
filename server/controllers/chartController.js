@@ -90,7 +90,7 @@ const getArtistData = async (req, res) => {
   getArtist(artistName, async (error, chart) => {
     if (error) {
       console.log(error + " error fetching artist data");
-      return res.status(400).send({ message: "Error retrieving chart data." });
+      return res.status(400).send({ message: "Error retrieving artist data." });
     }
 
     console.log("Chart data received.");
