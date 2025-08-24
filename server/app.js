@@ -76,6 +76,10 @@ const playlistRoutes = require("./routes/playlistRoutes");
 
 app.use("/playlist", playlistRoutes);
 
+const artistRoutes = require("./routes/artistRoutes");
+
+app.use("/artist", artistRoutes);
+
 app.get("/", (req, res) => {
   res.send("Hello <a href='login'>Login with Spotify</a>");
 });

@@ -46,8 +46,18 @@ async function fetchWebApi(endpoint, method, token, body) {
       Authorization: `Bearer ${token}`,
     },
     method,
-    body: JSON.stringify(body),
+    body: body ? JSON.stringify(body) : undefined,
   });
+  if (!res.ok) {
+    let errorMessage;
+    try {
+      const errData = await res.json();
+      errorMessage = errData.error?.message || JSON.stringify(errData);
+    } catch {
+      errorMessage = res.statusText;
+    }
+    throw new Error(`Spotify API error ${res.status}: ${errorMessage}`);
+  }
   return await res.json();
 }
 

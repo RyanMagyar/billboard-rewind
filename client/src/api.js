@@ -63,6 +63,33 @@ export const fetchChartData = async (selectedDate, chart) => {
   }
 };
 
+export const fetchArtistSearch = async (artist) => {
+  try {
+    const response = await fetch(
+      `${API_URL}/artist/searchArtist?q=${encodeURIComponent(artist)}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    );
+
+    if (!response.ok) {
+      const message = await response.text(); // "Hello"
+      throw new Error(message);
+    }
+
+    const data = await response.json();
+    console.log("artist search data: ", data);
+    return { success: true, data };
+  } catch (error) {
+    console.error("Error fetching artist data:", error);
+    return { success: false };
+  }
+};
+
 export const fetchArtistData = async (artist) => {
   try {
     const response = await await fetch(

@@ -9,6 +9,7 @@ import {
   checkUserSession,
   fetchChartData,
   fetchArtistData,
+  fetchArtistSearch,
   createSpotifyPlaylist,
   createSpotifyArtistPlaylist,
 } from "./api";
@@ -28,6 +29,7 @@ function App() {
   const [playlistUrl, setPlaylistUrl] = useState("");
   const [songsNotFound, setSongsNotFound] = useState();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [artistSearchResults, setArtistSearchResults] = useState();
 
   useEffect(() => {
     const initializeSession = async () => {
@@ -39,6 +41,27 @@ function App() {
 
     initializeSession();
   }, []);
+
+  useEffect(() => {
+    if (!artist) {
+      setArtistSearchResults([]);
+      return;
+    }
+
+    const delayDebounce = setTimeout(async () => {
+      try {
+        setIsLoading(true);
+        console.log("Fetching Artist: ", artist);
+        setIsLoading(false);
+        const result = await fetchArtistSearch(artist);
+        setArtistSearchResults(result.success ? result.data.artists.items : []);
+      } catch (err) {
+        console.error(err);
+      }
+    }, 750);
+
+    return () => clearTimeout(delayDebounce);
+  }, [artist]);
 
   const getChartData = async () => {
     console.log("Selected Date:", selectedDate);
@@ -128,6 +151,7 @@ function App() {
             artist={artist}
             setArtist={setArtist}
             getArtistData={getArtistData}
+            artistSearchResults={artistSearchResults}
             isLoading={isLoading}
           />
 
