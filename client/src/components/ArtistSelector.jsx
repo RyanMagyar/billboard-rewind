@@ -42,7 +42,7 @@ function ArtistSelector({
               onBlur={() => setTimeout(() => setIsOpen(false), 200)}
               disabled={!isLoggedIn}
             />
-            {isOpen && (
+            {isOpen && artistQuery && (
               <CommandList>
                 <CommandEmpty>No artists found.</CommandEmpty>
                 <CommandGroup heading="Artists">

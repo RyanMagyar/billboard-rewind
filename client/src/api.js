@@ -82,7 +82,6 @@ export const fetchArtistSearch = async (artist) => {
     }
 
     const data = await response.json();
-    console.log("artist search data: ", data);
     return { success: true, data };
   } catch (error) {
     console.error("Error fetching artist data:", error);
