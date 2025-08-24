@@ -41,7 +41,7 @@ function PlaylistSection({
           ) : null}
         </div>
         <div className="w-[375px] md:w-[400px]">
-          {songsNotFound ? (
+          {songsNotFound?.length > 0 ? (
             <Table>
               <TableCaption className="text-red-400">
                 Songs Spotify couldn&apos;t add

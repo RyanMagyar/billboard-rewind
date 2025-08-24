@@ -51,6 +51,7 @@ async function fetchWebApi(endpoint, method, token, body) {
   if (!res.ok) {
     let errorMessage;
     try {
+      console.log(res);
       const errData = await res.json();
       errorMessage = errData.error?.message || JSON.stringify(errData);
     } catch {

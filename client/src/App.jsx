@@ -24,6 +24,7 @@ function App() {
   const [chartData, setChartData] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [artist, setArtist] = useState("");
+  const [artistQuery, setArtistQuery] = useState("");
   const [artistData, setArtistData] = useState();
   const [playlistIsLoading, setPlaylistIsLoading] = useState(false);
   const [playlistUrl, setPlaylistUrl] = useState("");
@@ -43,17 +44,15 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!artist) {
+    if (!artistQuery) {
       setArtistSearchResults([]);
       return;
     }
 
     const delayDebounce = setTimeout(async () => {
       try {
-        setIsLoading(true);
-        console.log("Fetching Artist: ", artist);
-        setIsLoading(false);
-        const result = await fetchArtistSearch(artist);
+        console.log("Fetching Artist: ", artistQuery);
+        const result = await fetchArtistSearch(artistQuery);
         setArtistSearchResults(result.success ? result.data.artists.items : []);
       } catch (err) {
         console.error(err);
@@ -61,7 +60,7 @@ function App() {
     }, 750);
 
     return () => clearTimeout(delayDebounce);
-  }, [artist]);
+  }, [artistQuery]);
 
   const getChartData = async () => {
     console.log("Selected Date:", selectedDate);
@@ -75,6 +74,7 @@ function App() {
 
   const getArtistData = async () => {
     console.log("Selected Artist: ", artist);
+    setArtistQuery(artist);
     setIsLoading(true);
 
     const result = await fetchArtistData(artist);
@@ -150,9 +150,12 @@ function App() {
           <ArtistSelector
             artist={artist}
             setArtist={setArtist}
+            artistQuery={artistQuery}
+            setArtistQuery={setArtistQuery}
             getArtistData={getArtistData}
             artistSearchResults={artistSearchResults}
             isLoading={isLoading}
+            isLoggedIn={isLoggedIn}
           />
 
           <PlaylistSection
