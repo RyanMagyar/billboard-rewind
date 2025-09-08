@@ -77,7 +77,7 @@ export const fetchArtistSearch = async (artist) => {
     );
 
     if (!response.ok) {
-      const message = await response.text(); // "Hello"
+      const message = await response.text();
       throw new Error(message);
     }
 

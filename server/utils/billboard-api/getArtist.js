@@ -19,7 +19,7 @@ function convertDate(date) {
 
 async function getArtist(name, callback) {
   try {
-    let artist = name.replace(/ /g, "-");
+    let artist = name.replace(/[ /]/g, "-");
     console.log("Artist: " + artist);
 
     const requestURL = `${BILLBOARD_ARTIST_URL}${artist}/chart-history/hsi/`;
@@ -35,7 +35,6 @@ async function getArtist(name, callback) {
     chart.artist = $(".c-heading").first().text().trim();
     chart.url = requestURL;
 
-    // Preserve chart headings info (No.1, Top 10, Songs)
     const chartHeadings = $(".lrv-a-grid");
     if (chartHeadings.length > 1) {
       chart.numOnes = parseInt(
@@ -52,7 +51,6 @@ async function getArtist(name, callback) {
       );
     }
 
-    // Parse songs using new HTML structure
     const chartRows = $(".o-chart-results-list-row");
     if (chartRows.length === 0) {
       callback("Songs not found", null);

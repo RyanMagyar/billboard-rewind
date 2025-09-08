@@ -196,10 +196,12 @@ async function searchTracks(songArray, token, date, genre) {
         response.tracks.items.length = 0; // clear for next attempt
       }
 
-      // --- second attempt ---
+      // --- second attem ", track, " artist: ", artist);
       if (!response.tracks.items.length) {
         response = await fetchWebApi(
-          `v1/search?q=track:${track} artist:${artist}&type=track&market=US&limit=1&offset=0`,
+          `v1/search?q=${encodeURIComponent(
+            `track:${track} artist:${artist}`
+          )}&type=track&market=US&limit=1&offset=0`,
           "GET",
           token
         );
@@ -219,7 +221,9 @@ async function searchTracks(songArray, token, date, genre) {
       if (!response.tracks.items.length && track.includes("/")) {
         const cleanedTrack = track.split("/")[0];
         response = await fetchWebApi(
-          `v1/search?q=track:${cleanedTrack} artist:${artist}&type=track&market=US&limit=1&offset=0`,
+          `v1/search?q=${encodeURIComponent(
+            `track:${cleanedTrack} artist:${artist}`
+          )}&type=track&market=US&limit=1&offset=0`,
           "GET",
           token
         );
@@ -237,15 +241,17 @@ async function searchTracks(songArray, token, date, genre) {
       // --- try with split artists ---
       if (
         !response.tracks.items.length &&
-        /(And|With| x |Featuring|Starring)/i.test(artist)
+        /(And|With| x |Featuring|Starring|Feat.)/i.test(artist)
       ) {
         const splitArtists = artist
-          .split(/And|With| x |Featuring|Starring/i)
+          .split(/And|With| x |Featuring|Starring|Feat./i)
           .map((a) => a.trim());
 
         for (const split of splitArtists) {
           const tempResponse = await fetchWebApi(
-            `v1/search?q=track:${track} artist:${split}&type=track&market=US&limit=1&offset=0`,
+            `v1/search?q=${encodeURIComponent(
+              `track:${track} artist:${split}`
+            )}&type=track&market=US&limit=1&offset=0`,
             "GET",
             token
           );
