@@ -10,8 +10,15 @@ import {
 } from "./ui/table";
 import { useState, useMemo } from "react";
 import { ArrowUpIcon, ArrowDownIcon, ArrowUpDownIcon } from "lucide-react";
-import { format } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 import vinylGif from "../assets/vinyl3.gif";
+
+const formatDate = (value) => {
+  if (!value) return "";
+
+  const date = value instanceof Date ? value : parseISO(value);
+  return isValid(date) ? format(date, "MM-dd-yyyy") : "";
+};
 
 function ArtistTable({ artist, artistData, isLoading }) {
   const [sortConfig, setSortConfig] = useState({
@@ -144,10 +151,10 @@ function ArtistTable({ artist, artistData, isLoading }) {
                 <TableCell>{song.artist}</TableCell>
                 <TableCell className="text-center">{song.peak}</TableCell>
                 <TableCell className="hidden sm:table-cell text-center">
-                  {song.debutDate ? format(song.debutDate, "MM-dd-yyyy") : ""}
+                  {formatDate(song.debutDate)}
                 </TableCell>
                 <TableCell className="hidden sm:table-cell text-center">
-                  {song.peakDate ? format(song.peakDate, "MM-dd-yyyy") : ""}
+                  {formatDate(song.peakDate)}
                 </TableCell>
                 <TableCell className="text-center">{song.weeksOn}</TableCell>
               </TableRow>

@@ -2,6 +2,12 @@ const { fetchWebApi, refreshToken } = require("../utils/spotifyApi");
 const logger = require("../utils/logger");
 
 const searchArtist = async (req, res) => {
+  const query = req.query.q?.trim();
+
+  if (!query) {
+    return res.status(400).json({ message: "Missing artist search query." });
+  }
+
   if (!req.session.access_token) {
     logger.warn("Artist search attempted without access token");
     return res.status(402).send("Error No Access Token");
@@ -17,10 +23,9 @@ const searchArtist = async (req, res) => {
     }
   }
   const token = req.session.access_token;
-  const query = req.query.q;
   logger.info({ query }, "Searching Spotify artists");
   fetchWebApi(
-    `v1/search?q=${query.split(" ").join("%20")}&type=artist&limit=5`,
+    `v1/search?q=${encodeURIComponent(query)}&type=artist&limit=5`,
     "GET",
     token
   )
@@ -29,7 +34,9 @@ const searchArtist = async (req, res) => {
     })
     .catch((error) => {
       logger.warn({ err: error, query }, "Spotify artist search failed");
-      return res.status(500).send(error.message);
+      return res.status(502).json({
+        message: "Spotify artist search failed. Please try again.",
+      });
     });
 };
 

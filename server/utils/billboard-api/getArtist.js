@@ -9,10 +9,8 @@ const BILLBOARD_ARTIST_URL = `${BILLBOARD_BASE_URL}/artist/`;
 function convertDate(date) {
   const parsedDate = moment(date, "MM.DD.YY");
 
-  const year = parsedDate.year();
-
-  if (year >= 2026 && year <= 2099) {
-    parsedDate.year(year - 100);
+  if (parsedDate.isAfter(moment().add(1, "week"))) {
+    parsedDate.subtract(100, "years");
   }
 
   return parsedDate.format("YYYY-MM-DD");

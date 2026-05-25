@@ -53,7 +53,9 @@ function App() {
       try {
         console.log("Fetching Artist: ", artistQuery);
         const result = await fetchArtistSearch(artistQuery);
-        setArtistSearchResults(result.success ? result.data.artists.items : []);
+        setArtistSearchResults(
+          result.success ? result.data?.artists?.items ?? [] : []
+        );
       } catch (err) {
         console.error(err);
       }

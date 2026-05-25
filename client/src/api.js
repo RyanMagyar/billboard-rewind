@@ -78,7 +78,7 @@ export const fetchArtistSearch = async (artist) => {
 
     if (!response.ok) {
       const message = await response.text();
-      throw new Error(message);
+      throw new Error(message || "Artist search failed");
     }
 
     const data = await response.json();
