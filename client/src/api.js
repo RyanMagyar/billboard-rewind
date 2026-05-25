@@ -26,12 +26,7 @@ export const fetchChartData = async (selectedDate, chart) => {
       `${API_URL}/charts/getChart?date=${encodeURIComponent(
         format(selectedDate, "yyyy-MM-dd")
       )}&chart=${encodeURIComponent(chart)}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { method: "GET" }
     );
 
     if (!response.ok) {
@@ -66,9 +61,6 @@ export const fetchArtistSearch = async (artist) => {
       `${API_URL}/artist/searchArtist?q=${encodeURIComponent(artist)}`,
       {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
         credentials: "include",
       }
     );
@@ -89,12 +81,7 @@ export const fetchArtistData = async (artist) => {
   try {
     const response = await await fetch(
       `${API_URL}/charts/getArtist?name=${encodeURIComponent(artist)}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { method: "GET" }
     );
 
     if (!response.ok) {
