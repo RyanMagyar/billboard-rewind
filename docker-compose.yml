@@ -13,6 +13,7 @@ services:
       dockerfile: Dockerfile
       context: ./server
     container_name: billboard-backend
+    command: npm run dev
     volumes:
       - ./server:/server
       - /server/node_modules
@@ -21,7 +22,7 @@ services:
       - db
 
   db:
-    image: postgres:latest
+    image: postgres:17
     container_name: billboard-db
     restart: always
     ports: ["5432:5432"]

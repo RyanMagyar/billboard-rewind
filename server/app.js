@@ -55,16 +55,19 @@ app.use(
   })
 );
 
-app.use(
-  cookieSession({
-    name: "session",
-    secret: SECRET,
-    domain: process.env.NODE_ENV === "prod" ? ".chachfilms.com" : "localhost",
-    maxAge: 24 * 60 * 60 * 1000,
-    secure: process.env.NODE_ENV === "prod" ? true : false,
-    httpOnly: true,
-  })
-);
+const cookieSessionOptions = {
+  name: "session",
+  secret: SECRET,
+  maxAge: 24 * 60 * 60 * 1000,
+  secure: process.env.NODE_ENV === "prod" ? true : false,
+  httpOnly: true,
+};
+
+if (process.env.NODE_ENV === "prod") {
+  cookieSessionOptions.domain = ".chachfilms.com";
+}
+
+app.use(cookieSession(cookieSessionOptions));
 const chartRoutes = require("./routes/chartRoutes");
 app.use("/charts", chartRoutes);
 

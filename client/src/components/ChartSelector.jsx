@@ -101,7 +101,7 @@ function ChartSelector({
           </div>
           <DatePicker
             startYear={chart ? Number(chartDates[chart].split("-")[0]) : 1958}
-            endYear={2025}
+            endYear={2026}
             selectedDate={selectedDate}
             onDateChange={setSelectedDate}
             fromDate={chartDates[chart]}
