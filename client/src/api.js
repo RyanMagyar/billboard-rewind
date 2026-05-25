@@ -12,12 +12,10 @@ export const checkUserSession = async () => {
     if (response.ok) {
       const data = await response.json();
       return { success: true, hasSession: data.hasSession };
-    } else {
-      console.error("Failed to check session:", response.status);
-      return { success: false, error: response.status };
     }
+
+    return { success: false, error: response.status };
   } catch (error) {
-    console.error("Error checking session:", error);
     return { success: false, error: error.message };
   }
 };
@@ -43,7 +41,6 @@ export const fetchChartData = async (selectedDate, chart) => {
     const data = await response.json();
     return { success: true, data };
   } catch (error) {
-    console.error("Error fetching chart data:", error);
     return {
       success: false,
       error: error.message,
@@ -84,7 +81,6 @@ export const fetchArtistSearch = async (artist) => {
     const data = await response.json();
     return { success: true, data };
   } catch (error) {
-    console.error("Error fetching artist data:", error);
     return { success: false };
   }
 };
@@ -108,7 +104,6 @@ export const fetchArtistData = async (artist) => {
     const data = await response.json();
     return { success: true, data };
   } catch (error) {
-    console.error("Error fetching artist data:", error);
     return {
       success: false,
       error: error.message,
@@ -161,7 +156,6 @@ export const createSpotifyPlaylist = async (selectedDate, chart, chartData) => {
       songsNotFound: data.failedArray,
     };
   } catch (error) {
-    console.error("Error creating playlist:", error);
     return { success: false, error: error.message };
   }
 };
@@ -191,7 +185,6 @@ export const createSpotifyArtistPlaylist = async (artist, artistData) => {
       songsNotFound: data.failedArray,
     };
   } catch (error) {
-    console.error("Error creating playlist:", error);
     return { success: false, error: error.message };
   }
 };

@@ -79,7 +79,6 @@ export function DatePicker({
 
   useEffect(() => {
     // Update date if selectedDate prop changes
-    // console.log("Update: " + selectedDate);
     if (selectedDate && selectedDate.getTime() !== date.getTime()) {
       setDate(selectedDate);
       setVisibleMonth(selectedDate);
@@ -97,9 +96,6 @@ export function DatePicker({
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
-
-  //console.log(years);
-  //console.log(startYear);
 
   return (
     <Popover>

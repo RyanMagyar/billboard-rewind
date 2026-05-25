@@ -51,13 +51,12 @@ function App() {
 
     const delayDebounce = setTimeout(async () => {
       try {
-        console.log("Fetching Artist: ", artistQuery);
         const result = await fetchArtistSearch(artistQuery);
         setArtistSearchResults(
           result.success ? result.data?.artists?.items ?? [] : []
         );
-      } catch (err) {
-        console.error(err);
+      } catch {
+        setArtistSearchResults([]);
       }
     }, 750);
 
@@ -65,8 +64,6 @@ function App() {
   }, [artistQuery]);
 
   const getChartData = async () => {
-    console.log("Selected Date:", selectedDate);
-    console.log("Selected Chart:", chart);
     setIsLoading(true);
 
     const result = await fetchChartData(selectedDate, chart);
@@ -75,7 +72,6 @@ function App() {
   };
 
   const getArtistData = async () => {
-    console.log("Selected Artist: ", artist);
     setArtistQuery(artist);
     setIsLoading(true);
 
@@ -85,8 +81,6 @@ function App() {
   };
 
   const handleCreateSpotifyPlaylist = async () => {
-    console.log("Selected Date:", selectedDate);
-    console.log("Selected Chart:", chart);
     setPlaylistIsLoading(true);
 
     const result = await createSpotifyPlaylist(selectedDate, chart, chartData);
@@ -100,7 +94,6 @@ function App() {
   };
 
   const handleCreateSpotifyArtistPlaylist = async () => {
-    console.log("Selected Artist:", artist);
     setPlaylistIsLoading(true);
 
     const result = await createSpotifyArtistPlaylist(artist, artistData);

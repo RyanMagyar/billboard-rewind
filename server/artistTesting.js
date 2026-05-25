@@ -2,6 +2,7 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const moment = require("moment");
 const { getArtist } = require("./utils/billboard-api/getArtist");
+const logger = require("./utils/logger");
 
 const BILLBOARD_BASE_URL = "http://www.billboard.com";
 const BILLBOARD_ARTIST_URL = `${BILLBOARD_BASE_URL}/artist/`;
@@ -21,10 +22,9 @@ function convertDate(date) {
 async function getMyArtist(name, callback) {
   try {
     let artist = name.replace(/ /g, "-");
-    console.log("Artist: " + artist);
 
     const requestURL = `${BILLBOARD_ARTIST_URL}${artist}/chart-history/hsi/`;
-    console.log("Request Url: " + requestURL);
+    logger.info({ artist, requestURL }, "Fetching Billboard artist test data");
 
     const response = await axios.get(requestURL);
     const html = response.data;
@@ -59,8 +59,6 @@ async function getMyArtist(name, callback) {
         const song = {};
         // Get song title
         song.title = $(element).find(".c-title").text().trim();
-        //console.log("Title: " + song.title);
-
         // Get Artist
         song.artist = $(element).find(".c-label").eq(0).text().trim();
 
@@ -98,7 +96,7 @@ async function getMyArtist(name, callback) {
       callback("Songs not found", null);
     }
   } catch (error) {
-    console.log(error);
+    logger.error({ err: error }, "Error fetching artist test data");
     callback(error, null);
     return;
   }
@@ -107,18 +105,20 @@ async function getMyArtist(name, callback) {
 async function main() {
   await getArtist("Paul Mccartney", async (error, chart) => {
     if (error) {
-      console.log("Error retrieving artist");
+      logger.error({ err: error }, "Error retrieving artist");
+      return;
     }
-    console.log(chart.songs);
-    console.log(chart);
-    console.log(JSON.stringify(chart, null, 2));
+    logger.info(
+      { artist: chart.artist, songCount: chart.songs.length, chart },
+      "Retrieved artist"
+    );
   });
 }
 
 main().then(
   () => process.exit(0),
   (e) => {
-    console.error(e);
+    logger.error({ err: e }, "Artist test script failed");
     process.exit(1);
   }
 );

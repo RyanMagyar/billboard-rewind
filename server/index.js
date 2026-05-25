@@ -1,4 +1,5 @@
 require("dotenv").config();
+const logger = require("./utils/logger");
 // Authorization token that must have been created previously. See : https://developer.spotify.com/documentation/web-api/concepts/authorization
 const token = process.env.ACCESS_TOKEN;
 
@@ -506,15 +507,12 @@ const tracksUri = [
 
 async function createPlaylist(tracksUri) {
   const { id: user_id } = await fetchWebApi("v1/me", "GET");
-  //console.log(user_id);
 
   const playlist = await fetchWebApi(`v1/users/${user_id}/playlists`, "POST", {
     name: "Top Pop Tracks 10-17-1970",
     description: "Playlist created by Billboard rewind",
     public: false,
   });
-
-  //console.log(playlist);
 
   await fetchWebApi(
     `v1/playlists/${playlist.id}/tracks?uris=${tracksUri.join(",")}`,
@@ -548,9 +546,9 @@ async function searchTracks() {
     try {
       uriArray.push(response.tracks.items[0].uri);
     } catch (error) {
-      console.log(response);
-      console.log(
-        "Couldn't add track: " + track + " artist: " + artist + " rank: " + rank
+      logger.warn(
+        { err: error, track, artist, rank, response },
+        "Could not add track"
       );
     }
   }
@@ -559,23 +557,18 @@ async function searchTracks() {
 }
 
 async function main() {
-  //const createdPlaylist = await createPlaylist(tracksUri);
   const uriArray = await searchTracks();
-  //console.log(uriArray);
-  /*
-  console.log(JSON.stringify(track, null, 4));
-  console.log(track.tracks.items[0].uri);
-  console.log(process.env.CLIENT_ID);
-  */
   const createdPlaylist = await createPlaylist(uriArray);
-  console.log(createdPlaylist.name, createdPlaylist.id);
+  logger.info(
+    { playlistName: createdPlaylist.name, playlistId: createdPlaylist.id },
+    "Created playlist"
+  );
 }
 
 main().then(
   () => process.exit(0),
   (e) => {
-    console.error(e);
+    logger.error({ err: e }, "Script failed");
     process.exit(1);
   }
 );
-// console.log(createdPlaylist.name, createdPlaylist.id);
