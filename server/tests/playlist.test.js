@@ -1,11 +1,22 @@
-jest.mock("cookie-session", () => {
+let mockSession = {
+  access_token: "mockAccessToken",
+  expires_at: Date.now() + 10000,
+};
+
+jest.mock("express-session", () => {
   return jest.fn(() => (req, res, next) => {
-    req.session = {
-      access_token: "mockAccessToken",
-      expires_at: Date.now() + 10000,
-    };
+    req.session = mockSession;
     next();
   });
+});
+
+jest.mock("connect-pg-simple", () => {
+  return () =>
+    class PgSessionStore {
+      constructor(options) {
+        this.options = options;
+      }
+    };
 });
 
 const request = require("supertest");
@@ -28,8 +39,6 @@ afterEach(() => {
 });
 
 describe("POST /playlist/createPlaylist", () => {
-  let mockSession;
-
   beforeEach(() => {
     mockSession = {
       access_token: "mock_access_token",
@@ -51,7 +60,10 @@ describe("POST /playlist/createPlaylist", () => {
         .query(query);
 
       expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty("message", "Missing query params!");
+      expect(response.body).toHaveProperty(
+        "error",
+        "Invalid parameters. Provide either (chart and date) or artist."
+      );
     }
   });
 
@@ -74,12 +86,7 @@ describe("POST /playlist/createPlaylist", () => {
 
   test("Should return 402 when access token is missing", async () => {
     jest.resetModules();
-    jest.mock("cookie-session", () => {
-      return jest.fn(() => (req, res, next) => {
-        req.session = {}; // No access_token
-        next();
-      });
-    });
+    mockSession = {}; // No access_token
 
     app = require("../app");
 
@@ -95,16 +102,11 @@ describe("POST /playlist/createPlaylist", () => {
     jest.resetModules();
     const { refreshToken } = require("../utils/spotifyApi");
     refreshToken.mockResolvedValue(402);
-    jest.mock("cookie-session", () => {
-      return jest.fn(() => (req, res, next) => {
-        req.session = {
-          access_token: "mockAccessToken",
-          expires_at: Date.now() - 10000,
-          refresh_token: "",
-        };
-        next();
-      });
-    });
+    mockSession = {
+      access_token: "mockAccessToken",
+      expires_at: Date.now() - 10000,
+      refresh_token: "",
+    };
 
     app = require("../app");
 
@@ -125,16 +127,11 @@ describe("POST /playlist/createPlaylist", () => {
       createPlaylist,
     } = require("../utils/spotifyApi");
     refreshToken.mockResolvedValue(200);
-    jest.mock("cookie-session", () => {
-      return jest.fn(() => (req, res, next) => {
-        req.session = {
-          access_token: "mockAccessToken",
-          expires_at: Date.now() - 10000,
-          refresh_token: "mockRefreshToken",
-        };
-        next();
-      });
-    });
+    mockSession = {
+      access_token: "mockAccessToken",
+      expires_at: Date.now() - 10000,
+      refresh_token: "mockRefreshToken",
+    };
     searchTracks.mockResolvedValue({
       uriArray: ["spotify:track:123"],
       failedArray: [],

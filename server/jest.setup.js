@@ -2,7 +2,7 @@ const db = require("./db");
 
 beforeAll(async () => {
   await db.query(`
-    DROP TABLE IF EXISTS charts, songs CASCADE;
+    DROP TABLE IF EXISTS charts, songs, user_sessions CASCADE;
     
     CREATE TABLE charts (
   id SERIAL PRIMARY KEY,
@@ -22,6 +22,14 @@ CREATE TABLE songs (
   created_at TIMESTAMP DEFAULT NOW(),
   UNIQUE(title, artist)
 );
+
+CREATE TABLE user_sessions (
+  sid VARCHAR NOT NULL PRIMARY KEY,
+  sess JSON NOT NULL,
+  expire TIMESTAMP(6) NOT NULL
+);
+
+CREATE INDEX IDX_user_sessions_expire ON user_sessions (expire);
   `);
 });
 

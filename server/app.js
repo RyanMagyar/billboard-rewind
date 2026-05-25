@@ -2,7 +2,8 @@ const express = require("express");
 const { getChart } = require("billboard-top-100");
 var querystring = require("querystring");
 const moment = require("moment");
-var cookieSession = require("cookie-session");
+const session = require("express-session");
+const PgSession = require("connect-pg-simple")(session);
 const cors = require("cors");
 const expAutoSan = require("express-autosanitizer");
 const pinoHttp = require("pino-http");
@@ -24,6 +25,7 @@ require("dotenv").config({
 });
 
 const logger = require("./utils/logger");
+const { pool } = require("./db");
 const app = express();
 const port = 3000;
 
@@ -84,19 +86,33 @@ app.use(
   })
 );
 
-const cookieSessionOptions = {
-  name: "session",
-  secret: SECRET,
+const sessionCookieOptions = {
   maxAge: 24 * 60 * 60 * 1000,
   secure: process.env.NODE_ENV === "prod" ? true : false,
   httpOnly: true,
 };
 
 if (process.env.NODE_ENV === "prod") {
-  cookieSessionOptions.domain = ".chachfilms.com";
+  sessionCookieOptions.domain = ".chachfilms.com";
 }
 
-app.use(cookieSession(cookieSessionOptions));
+app.use(
+  session({
+    store: new PgSession({
+      pool,
+      tableName: "user_sessions",
+      createTableIfMissing: true,
+      pruneSessionInterval: 60 * 60,
+    }),
+    name: "session",
+    secret: SECRET,
+    resave: false,
+    saveUninitialized: false,
+    rolling: true,
+    cookie: sessionCookieOptions,
+  })
+);
+
 const chartRoutes = require("./routes/chartRoutes");
 app.use("/charts", chartRoutes);
 
