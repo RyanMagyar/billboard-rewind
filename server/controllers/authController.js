@@ -1,4 +1,5 @@
 const querystring = require("querystring");
+const crypto = require("crypto");
 require("dotenv").config();
 const logger = require("../utils/logger");
 
@@ -6,9 +7,10 @@ const AUTH_URL = "https://accounts.spotify.com/authorize";
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
 
 exports.login = (req, res) => {
-  const state = "ovXzE45nraCUnDjX";
+  const state = crypto.randomBytes(16).toString("hex");
   const scope = "user-read-private user-read-email playlist-modify-private";
   const redirectUri = process.env.SERVER_URL + "/auth/callback";
+  req.session.spotify_auth_state = state;
 
   logger.info({ redirectUri }, "Starting Spotify login");
 
@@ -32,6 +34,15 @@ exports.callback = async (req, res) => {
   }
 
   const code = req.query.code;
+  const state = req.query.state;
+  const expectedState = req.session.spotify_auth_state;
+  delete req.session.spotify_auth_state;
+
+  if (!state || !expectedState || state !== expectedState) {
+    logger.warn("Spotify callback state mismatch");
+    return res.status(400).json({ error: "Invalid authorization state" });
+  }
+
   if (!code) {
     logger.warn("Spotify callback missing authorization code");
     return res.status(400).json({ error: "Missing authorization code" });
