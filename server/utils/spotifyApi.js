@@ -9,6 +9,7 @@ const querystring = require("querystring");
 require("dotenv").config();
 
 const logger = require("./logger");
+const { encryptToken, decryptToken } = require("./tokenCrypto");
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -332,14 +333,15 @@ async function searchTracks(songArray, token, date, genre) {
 
 async function refreshToken(req) {
   try {
-    const refresh_token = req.session.refresh_token;
-    if (!refresh_token) {
+    const encryptedRefreshToken = req.session.refresh_token;
+    if (!encryptedRefreshToken) {
       logger.warn("Tried refreshing Spotify token without refresh token");
       return 402;
     }
 
     if (Date.now() > req.session.expires_at) {
       logger.info("Refreshing Spotify token");
+      const refresh_token = decryptToken(encryptedRefreshToken);
       const response = await fetch(TOKEN_URL, {
         method: "POST",
         body: querystring.stringify({
@@ -364,9 +366,10 @@ async function refreshToken(req) {
 
       const access_token = json.access_token;
       const expires_in = json.expires_in;
+      const next_refresh_token = json.refresh_token || refresh_token;
 
-      req.session.access_token = access_token;
-      req.session.refresh_token = refresh_token;
+      req.session.access_token = encryptToken(access_token);
+      req.session.refresh_token = encryptToken(next_refresh_token);
       req.session.expires_at = Date.now() + expires_in * 1000 - 300000;
 
       logger.info({ expiresIn: expires_in }, "Spotify token refresh succeeded");

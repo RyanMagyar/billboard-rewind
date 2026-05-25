@@ -6,6 +6,7 @@ const {
   refreshToken,
 } = require("../utils/spotifyApi");
 const logger = require("../utils/logger");
+const { decryptToken } = require("../utils/tokenCrypto");
 
 async function createPlaylistHandler(req, res) {
   if (!req.session.access_token) {
@@ -62,7 +63,7 @@ async function createPlaylistHandler(req, res) {
     "Processing playlist creation"
   );
   //const songArray = req.body;
-  const token = req.session.access_token;
+  const token = decryptToken(req.session.access_token);
 
   const myDate = moment(date, "MM-DD-YYYY").format("YYYY-MM-DD");
 

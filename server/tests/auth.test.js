@@ -1,5 +1,6 @@
 const querystring = require("querystring");
-const { login, callback } = require("../controllers/authController");
+const { login, callback, logout } = require("../controllers/authController");
+const { decryptToken } = require("../utils/tokenCrypto");
 
 describe("Spotify auth controller", () => {
   const originalEnv = process.env;
@@ -13,6 +14,8 @@ describe("Spotify auth controller", () => {
       CLIENT_SECRET: "client_secret",
       SERVER_URL: "https://api.example.com",
       CLIENT_URL: "https://music.example.com",
+      TOKEN_ENCRYPTION_KEY:
+        "MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=",
     };
   });
 
@@ -83,9 +86,67 @@ describe("Spotify auth controller", () => {
 
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(req.session.spotify_auth_state).toBeUndefined();
-    expect(req.session.access_token).toBe("access_token");
-    expect(req.session.refresh_token).toBe("refresh_token");
+    expect(req.session.access_token).toMatchObject({
+      v: 1,
+      alg: "aes-256-gcm",
+      iv: expect.any(String),
+      tag: expect.any(String),
+      ciphertext: expect.any(String),
+    });
+    expect(req.session.refresh_token).toMatchObject({
+      v: 1,
+      alg: "aes-256-gcm",
+      iv: expect.any(String),
+      tag: expect.any(String),
+      ciphertext: expect.any(String),
+    });
+    expect(req.session.access_token.ciphertext).not.toBe("access_token");
+    expect(req.session.refresh_token.ciphertext).not.toBe("refresh_token");
+    expect(decryptToken(req.session.access_token)).toBe("access_token");
+    expect(decryptToken(req.session.refresh_token)).toBe("refresh_token");
     expect(req.session.expires_at).toEqual(expect.any(Number));
     expect(res.redirect).toHaveBeenCalledWith("https://music.example.com/");
+  });
+
+  test("logout destroys the session and clears the session cookie", () => {
+    process.env.NODE_ENV = "prod";
+    const req = {
+      session: {
+        destroy: jest.fn((callback) => callback()),
+      },
+    };
+    const res = {
+      clearCookie: jest.fn(),
+      sendStatus: jest.fn(),
+    };
+
+    logout(req, res);
+
+    expect(req.session.destroy).toHaveBeenCalledTimes(1);
+    expect(res.clearCookie).toHaveBeenCalledWith("session", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+      domain: ".chachfilms.com",
+    });
+    expect(res.sendStatus).toHaveBeenCalledWith(204);
+  });
+
+  test("logout returns 500 when session destroy fails", () => {
+    const req = {
+      session: {
+        destroy: jest.fn((callback) => callback(new Error("destroy failed"))),
+      },
+    };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    logout(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ message: "Logout failed" });
   });
 });

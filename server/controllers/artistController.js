@@ -1,5 +1,6 @@
 const { fetchWebApi, refreshToken } = require("../utils/spotifyApi");
 const logger = require("../utils/logger");
+const { decryptToken } = require("../utils/tokenCrypto");
 
 const searchArtist = async (req, res) => {
   const query = req.query.q?.trim();
@@ -22,7 +23,7 @@ const searchArtist = async (req, res) => {
       return res.status(500).send("Internal Server Error");
     }
   }
-  const token = req.session.access_token;
+  const token = decryptToken(req.session.access_token);
   logger.info({ query }, "Searching Spotify artists");
   fetchWebApi(
     `v1/search?q=${encodeURIComponent(query)}&type=artist&limit=5`,

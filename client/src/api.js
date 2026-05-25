@@ -20,6 +20,19 @@ export const checkUserSession = async () => {
   }
 };
 
+export const logoutUser = async () => {
+  try {
+    const response = await fetch(`${API_URL}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+
+    return { success: response.ok, error: response.ok ? null : response.status };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
 export const fetchChartData = async (selectedDate, chart) => {
   try {
     const response = await fetch(

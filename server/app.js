@@ -90,6 +90,7 @@ const sessionCookieOptions = {
   maxAge: 24 * 60 * 60 * 1000,
   secure: process.env.NODE_ENV === "prod" ? true : false,
   httpOnly: true,
+  sameSite: "lax",
 };
 
 if (process.env.NODE_ENV === "prod") {

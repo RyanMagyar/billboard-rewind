@@ -19,6 +19,11 @@ jest.mock("connect-pg-simple", () => {
     };
 });
 
+jest.mock("../utils/tokenCrypto", () => ({
+  encryptToken: jest.fn((token) => ({ encrypted: token })),
+  decryptToken: jest.fn((token) => `decrypted:${token}`),
+}));
+
 const request = require("supertest");
 let app = require("../app");
 const {
@@ -126,6 +131,7 @@ describe("POST /playlist/createPlaylist", () => {
       searchTracks,
       createPlaylist,
     } = require("../utils/spotifyApi");
+    const { decryptToken } = require("../utils/tokenCrypto");
     refreshToken.mockResolvedValue(200);
     mockSession = {
       access_token: "mockAccessToken",
@@ -148,6 +154,13 @@ describe("POST /playlist/createPlaylist", () => {
       .send([{ artist: "Coldplay", title: "Fix You", rank: 1 }]);
 
     expect(refreshToken.mock.calls.length).toBe(1);
+    expect(decryptToken).toHaveBeenCalledWith("mockAccessToken");
+    expect(searchTracks).toHaveBeenCalledWith(
+      expect.any(Array),
+      "decrypted:mockAccessToken",
+      "2023-12-31",
+      "Rock"
+    );
     expect(response.status).toBe(200);
   });
 });

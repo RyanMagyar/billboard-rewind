@@ -2,6 +2,7 @@ const querystring = require("querystring");
 const crypto = require("crypto");
 require("dotenv").config();
 const logger = require("../utils/logger");
+const { encryptToken } = require("../utils/tokenCrypto");
 
 const AUTH_URL = "https://accounts.spotify.com/authorize";
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
@@ -76,8 +77,8 @@ exports.callback = async (req, res) => {
       return res.redirect(process.env.CLIENT_URL + "/");
     }
 
-    req.session.access_token = json.access_token;
-    req.session.refresh_token = json.refresh_token;
+    req.session.access_token = encryptToken(json.access_token);
+    req.session.refresh_token = encryptToken(json.refresh_token);
     req.session.expires_at = Date.now() + json.expires_in * 1000 - 300000;
 
     logger.info("Spotify callback completed");
@@ -96,4 +97,27 @@ exports.checkSession = (req, res) => {
   } else {
     res.json({ hasSession: false });
   }
+};
+
+exports.logout = (req, res) => {
+  req.session.destroy((error) => {
+    if (error) {
+      logger.error({ err: error }, "Error during logout");
+      return res.status(500).json({ message: "Logout failed" });
+    }
+
+    const clearCookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "prod" ? true : false,
+      sameSite: "lax",
+      path: "/",
+    };
+
+    if (process.env.NODE_ENV === "prod") {
+      clearCookieOptions.domain = ".chachfilms.com";
+    }
+
+    res.clearCookie("session", clearCookieOptions);
+    return res.sendStatus(204);
+  });
 };

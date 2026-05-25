@@ -7,6 +7,7 @@ import ChartTable from "./components/ChartTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import {
   checkUserSession,
+  logoutUser,
   fetchChartData,
   fetchArtistData,
   fetchArtistSearch,
@@ -106,9 +107,20 @@ function App() {
     setPlaylistIsLoading(false);
   };
 
+  const handleLogout = async () => {
+    const result = await logoutUser();
+
+    if (result.success) {
+      setIsLoggedIn(false);
+      setPlaylistUrl("");
+      setSongsNotFound(undefined);
+      setArtistSearchResults([]);
+    }
+  };
+
   return (
     <>
-      <Header />
+      <Header isLoggedIn={isLoggedIn} logout={handleLogout} />
 
       <Tabs defaultValue="chart" className="">
         <TabsList className="grid w-[100vw] sm:w-[400px] grid-cols-2 mx-auto mb-5">
