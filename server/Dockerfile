@@ -2,10 +2,10 @@ FROM node:20-alpine
 
 WORKDIR /server
 
-COPY package.json ./
+COPY package*.json ./
 
-RUN npm install
+RUN npm ci
 
 COPY . .
 
-CMD ["npm", "run", "start"];
+CMD ["npm", "run", "start"]
