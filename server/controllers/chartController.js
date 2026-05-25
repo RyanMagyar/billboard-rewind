@@ -4,6 +4,7 @@ const { getNextSaturday } = require("../utils/helpers");
 const { selectChart, insertChart } = require("../utils/databaseHelper");
 const moment = require("moment");
 const db = require("../db");
+const logger = require("../utils/logger");
 
 const genres = {
   Rock: "hot-mainstream-rock-tracks",
@@ -33,21 +34,21 @@ const getChartData = async (req, res) => {
 
   const chartWeek = getNextSaturday(date);
 
-  console.log(`Checking cache for chart: ${chartName} on ${chartWeek}`);
+  logger.info({ chartName, chartWeek }, "Checking chart cache");
 
   const chartResult = await selectChart(chartName, chartWeek);
 
   if (chartResult.rows.length > 0) {
     const chart = chartResult.rows[0];
-    console.log("Cache hit for chart");
+    logger.info({ chartName, chartWeek }, "Chart cache hit");
     return res.json(chart.songs);
   } else {
-    console.log("Chart not found in cache.");
+    logger.info({ chartName, chartWeek }, "Chart cache miss");
   }
 
   getChart(genres[chartName], date, async (err, chart) => {
     if (err) {
-      console.log(err);
+      logger.warn({ err, chartName, date }, "Error retrieving chart data");
       return res.status(400).send({ message: "Error retrieving chart data." });
     }
 
@@ -60,12 +61,11 @@ const getChartData = async (req, res) => {
         .replace(/(?:^|\s|\()\w/g, (char) => char.toUpperCase());
     });
 
-    console.log("Input date: " + date);
-    console.log("Next Sat: " + getNextSaturday(date));
-    console.log(`Week of ${chart.week}`);
-    //console.log(JSON.stringify(chart, null, 2));
-
-    console.log("Updating DB chart.");
+    logger.info(
+      { chartName, date, chartWeek, billboardWeek: chart.week },
+      "Retrieved chart data"
+    );
+    logger.info({ chartName, chartWeek }, "Inserting chart cache entry");
     await insertChart(
       chartResult.rows.length,
       chart.songs,
@@ -85,15 +85,15 @@ const getArtistData = async (req, res) => {
     return res.status(400).send({ message: "Missing query params!" });
   }
 
-  console.log("Getting Artist data for: " + artistName);
+  logger.info({ artistName }, "Getting artist data");
 
   getArtist(artistName, async (error, chart) => {
     if (error) {
-      console.log(error + " error fetching artist data");
+      logger.warn({ err: error, artistName }, "Error fetching artist data");
       return res.status(400).send({ message: "Error retrieving artist data." });
     }
 
-    console.log("Chart data received.");
+    logger.info({ artistName }, "Artist chart data received");
     res.json(chart);
     return;
   });

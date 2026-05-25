@@ -1,6 +1,7 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 const moment = require("moment");
+const logger = require("../logger");
 
 const BILLBOARD_BASE_URL = "http://www.billboard.com";
 const BILLBOARD_ARTIST_URL = `${BILLBOARD_BASE_URL}/artist/`;
@@ -20,10 +21,9 @@ function convertDate(date) {
 async function getArtist(name, callback) {
   try {
     let artist = name.replace(/[ /]/g, "-");
-    console.log("Artist: " + artist);
 
     const requestURL = `${BILLBOARD_ARTIST_URL}${artist}/chart-history/hsi/`;
-    console.log("Request Url: " + requestURL);
+    logger.info({ artist, requestURL }, "Fetching Billboard artist data");
 
     const response = await axios.get(requestURL);
     const html = response.data;
@@ -102,7 +102,7 @@ async function getArtist(name, callback) {
       callback("Songs not found", null);
     }
   } catch (error) {
-    console.log("Error fetching artist data:", error);
+    logger.warn({ err: error, name }, "Error fetching Billboard artist data");
     callback(error, null);
   }
 }

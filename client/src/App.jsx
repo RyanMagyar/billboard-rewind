@@ -20,7 +20,7 @@ import ArtistTable from "./components/ArtistTable";
 function App() {
   //const [count, setCount] = useState(0);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [chart, setChart] = useState();
+  const [chart, setChart] = useState("");
   const [chartData, setChartData] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [artist, setArtist] = useState("");
@@ -30,7 +30,7 @@ function App() {
   const [playlistUrl, setPlaylistUrl] = useState("");
   const [songsNotFound, setSongsNotFound] = useState();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [artistSearchResults, setArtistSearchResults] = useState();
+  const [artistSearchResults, setArtistSearchResults] = useState([]);
 
   useEffect(() => {
     const initializeSession = async () => {

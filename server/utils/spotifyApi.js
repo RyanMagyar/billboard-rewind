@@ -8,9 +8,7 @@ const {
 const querystring = require("querystring");
 require("dotenv").config();
 
-const db = require("../db");
-const { isTemplateMiddleOrTemplateTail } = require("typescript");
-const e = require("express");
+const logger = require("./logger");
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -51,12 +49,15 @@ async function fetchWebApi(endpoint, method, token, body) {
   if (!res.ok) {
     let errorMessage;
     try {
-      console.log(res);
       const errData = await res.json();
       errorMessage = errData.error?.message || JSON.stringify(errData);
     } catch {
       errorMessage = res.statusText;
     }
+    logger.warn(
+      { endpoint, method, status: res.status, errorMessage },
+      "Spotify API request failed"
+    );
     throw new Error(`Spotify API error ${res.status}: ${errorMessage}`);
   }
   return await res.json();
@@ -103,9 +104,11 @@ async function searchTracks(songArray, token, date, genre) {
   let chartWeek;
 
   if (genre) {
-    const chartWeek = getNextSaturday(date);
-    console.log(`Songs array length: ${songArray.length}`);
-    console.log(`Checking cache for chart: ${genre} on ${chartWeek}`);
+    chartWeek = getNextSaturday(date);
+    logger.info(
+      { genre, chartWeek, songCount: songArray.length },
+      "Checking chart cache for Spotify data"
+    );
 
     chartResult = await selectChart(genre, chartWeek);
 
@@ -114,7 +117,10 @@ async function searchTracks(songArray, token, date, genre) {
 
       // If chart has Spotify data, parse it
       if (chart.spotify_data_filled) {
-        console.log("Chart found in cache with Spotify data.");
+        logger.info(
+          { genre, chartWeek },
+          "Chart cache hit with Spotify data"
+        );
 
         let cachedSongs = chart.songs;
         cachedSongs.forEach((song) => {
@@ -132,28 +138,27 @@ async function searchTracks(songArray, token, date, genre) {
         return { uriArray, failedArray };
       }
 
-      console.log("Chart found in cache but missing Spotify data.");
+      logger.info({ genre, chartWeek }, "Chart cache missing Spotify data");
     } else {
-      console.log("Chart not found in cache.");
+      logger.info({ genre, chartWeek }, "Chart cache miss");
     }
   }
 
   for (const song of songArray) {
     let { artist, title, rank } = song;
     rank = rank ? rank : song.peak;
-    console.log(song);
     let year = song.debutDate.split("-")[0];
     let track = removeUnmatchedBrackets(title)
       .replace(/\s*\(.*?\)\s*/g, "")
       .replace(/\s*\{.*?\}\s*/g, "")
       .trim();
 
-    console.log(`Checking song cache: ${title} by ${artist}`);
+    logger.debug({ title, artist, rank }, "Checking song cache");
 
     const songResult = await selectSong(title, artist);
 
     if (songResult.rows.length > 0) {
-      console.log("CACHE HIT");
+      logger.debug({ title, artist, rank }, "Song cache hit");
       const dbSong = songResult.rows[0];
 
       if (dbSong.spotify_uri) {
@@ -168,9 +173,10 @@ async function searchTracks(songArray, token, date, genre) {
         song.spotifyURI = "";
       }
     } else {
-      console.log(`Fetching song from Spotify: ${track}`);
-
-      console.log(`Year: year:${year - 1}-${Number(year) + 1}`);
+      logger.debug(
+        { title, artist, rank, track, yearRange: `${year - 1}-${Number(year) + 1}` },
+        "Fetching song from Spotify"
+      );
 
       let query = `track:${track} artist:${artist} year:${year - 1}-${
         Number(year) + 1
@@ -191,7 +197,7 @@ async function searchTracks(songArray, token, date, genre) {
         response.tracks.items.length &&
         !fallback_response
       ) {
-        console.log("Setting fallback from first query...");
+        logger.debug({ title, artist, rank }, "Saving first Spotify fallback");
         fallback_response = JSON.parse(JSON.stringify(response));
         response.tracks.items.length = 0; // clear for next attempt
       }
@@ -211,7 +217,10 @@ async function searchTracks(songArray, token, date, genre) {
           response.tracks.items.length &&
           !fallback_response
         ) {
-          console.log("Setting fallback from second query...");
+          logger.debug(
+            { title, artist, rank },
+            "Saving second Spotify fallback"
+          );
           fallback_response = JSON.parse(JSON.stringify(response));
           response.tracks.items.length = 0;
         }
@@ -259,7 +268,10 @@ async function searchTracks(songArray, token, date, genre) {
           if (tempResponse.tracks.items.length) {
             if (!isMatch(tempResponse, track, artist)) {
               if (!fallback_response) {
-                console.log("Setting fallback from split artist...");
+                logger.debug(
+                  { title, artist, rank, splitArtist: split },
+                  "Saving split-artist Spotify fallback"
+                );
                 fallback_response = JSON.parse(JSON.stringify(tempResponse));
               }
             } else {
@@ -272,24 +284,22 @@ async function searchTracks(songArray, token, date, genre) {
 
       // --- finally: fallback ---
       if (!response.tracks.items.length && fallback_response) {
-        console.log("No perfect match found. Using fallback...");
+        logger.debug({ title, artist, rank }, "Using Spotify fallback match");
         response = fallback_response;
       }
 
       try {
-        //console.log(response.tracks.items[0]);
         const spotifyURI = response.tracks.items[0].uri;
-        //console.log(spotifyURI);
         uriArray.push(spotifyURI);
         song.spotifyURI = spotifyURI;
 
         await insertSong(title, artist, spotifyURI);
       } catch (error) {
-        console.log(error);
         failedArray.push({ title, artist, rank });
         song.spotifyURI = "";
-        console.log(
-          `Couldn't add track: ${title} | Artist: ${artist} | Rank: ${rank}`
+        logger.warn(
+          { err: error, title, artist, rank },
+          "Could not match Spotify track"
         );
 
         await insertSong(title, artist);
@@ -299,7 +309,10 @@ async function searchTracks(songArray, token, date, genre) {
   }
 
   if (genre) {
-    console.log("Updating DB chart with Spotify data.");
+    logger.info(
+      { genre, chartWeek, foundCount: uriArray.length, failedCount: failedArray.length },
+      "Updating chart cache with Spotify data"
+    );
 
     await insertChart(
       chartResult.rows.length,
@@ -310,23 +323,23 @@ async function searchTracks(songArray, token, date, genre) {
     );
   }
 
-  //console.log(JSON.stringify(songArray, null, 2));
-  console.log("Returning from searchTracks");
+  logger.info(
+    { foundCount: uriArray.length, failedCount: failedArray.length },
+    "Returning Spotify track search results"
+  );
   return { uriArray, failedArray };
 }
 
 async function refreshToken(req) {
   try {
     const refresh_token = req.session.refresh_token;
-    console.log(refresh_token);
     if (!refresh_token) {
-      console.log("Tried refreshing token without refresh token");
+      logger.warn("Tried refreshing Spotify token without refresh token");
       return 402;
     }
 
     if (Date.now() > req.session.expires_at) {
-      console.log("Refreshing Token");
-      console.log(refresh_token);
+      logger.info("Refreshing Spotify token");
       const response = await fetch(TOKEN_URL, {
         method: "POST",
         body: querystring.stringify({
@@ -340,26 +353,30 @@ async function refreshToken(req) {
             new Buffer.from(CLIENT_ID + ":" + CLIENT_SECRET).toString("base64"),
         },
       });
-      console.log("refresh success");
       const json = await response.json();
+      if (!response.ok) {
+        logger.warn(
+          { status: response.status, spotifyError: json.error },
+          "Spotify token refresh failed"
+        );
+        return 500;
+      }
+
       const access_token = json.access_token;
       const expires_in = json.expires_in;
-      //console.log(json);
-      console.log(access_token);
-      console.log(refresh_token);
-      console.log(expires_in);
 
       req.session.access_token = access_token;
       req.session.refresh_token = refresh_token;
       req.session.expires_at = Date.now() + expires_in * 1000 - 300000;
 
+      logger.info({ expiresIn: expires_in }, "Spotify token refresh succeeded");
       return 200;
     } else {
-      console.log("Token not expired yet");
+      logger.debug("Spotify token not expired");
       return 403;
     }
   } catch (error) {
-    console.error("Error refreshing token:", error);
+    logger.error({ err: error }, "Error refreshing Spotify token");
     return 500;
   }
 }

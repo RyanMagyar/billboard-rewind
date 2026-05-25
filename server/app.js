@@ -5,6 +5,7 @@ const moment = require("moment");
 var cookieSession = require("cookie-session");
 const cors = require("cors");
 const expAutoSan = require("express-autosanitizer");
+const pinoHttp = require("pino-http");
 
 let envPath;
 
@@ -21,6 +22,8 @@ if (process.env.NODE_ENV === "prod") {
 require("dotenv").config({
   path: envPath,
 });
+
+const logger = require("./utils/logger");
 const app = express();
 const port = 3000;
 
@@ -43,6 +46,32 @@ app.set("trust proxy", 1);
 app.use(express.json());
 
 app.use(expAutoSan.all);
+
+app.use(
+  pinoHttp({
+    logger,
+    serializers: {
+      req(req) {
+        return {
+          id: req.id,
+          method: req.method,
+          url: req.url,
+          remoteAddress: req.remoteAddress,
+        };
+      },
+      res(res) {
+        return {
+          statusCode: res.statusCode,
+        };
+      },
+    },
+    customLogLevel(req, res, err) {
+      if (err || res.statusCode >= 500) return "error";
+      if (res.statusCode >= 400) return "warn";
+      return "info";
+    },
+  })
+);
 
 app.use(
   cors({
@@ -86,9 +115,4 @@ app.use("/artist", artistRoutes);
 app.get("/", (req, res) => {
   res.send("Hello <a href='login'>Login with Spotify</a>");
 });
-/*
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
-*/
 module.exports = app;

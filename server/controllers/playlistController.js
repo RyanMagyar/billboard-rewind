@@ -5,15 +5,16 @@ const {
   createPlaylist,
   refreshToken,
 } = require("../utils/spotifyApi");
+const logger = require("../utils/logger");
 
 async function createPlaylistHandler(req, res) {
   if (!req.session.access_token) {
-    console.log("/createPlaylist with no access token");
+    logger.warn("Playlist creation attempted without access token");
     return res.status(402).send("Error No Access Token");
   }
 
   if (Date.now() > req.session.expires_at) {
-    console.log("/createPlaylist refreshing token");
+    logger.info("Refreshing Spotify token before playlist creation");
     const tokenRes = await refreshToken(req);
     if (tokenRes === 402) {
       return res.status(402).send("Token Refresh Error");
@@ -56,8 +57,10 @@ async function createPlaylistHandler(req, res) {
     songArray = req.body.songs;
   }
 
-  console.log("Processing Playlist Creation...");
-  console.log(songArray);
+  logger.info(
+    { chart, date, artist, songCount: songArray.length },
+    "Processing playlist creation"
+  );
   //const songArray = req.body;
   const token = req.session.access_token;
 
@@ -66,6 +69,10 @@ async function createPlaylistHandler(req, res) {
   const songsObj = await searchTracks(songArray, token, myDate, chart);
   const uriArray = songsObj.uriArray;
   const failedArray = songsObj.failedArray;
+  logger.info(
+    { foundCount: uriArray.length, failedCount: failedArray.length },
+    "Spotify track search completed"
+  );
 
   let playlistName;
   if (artist) {
@@ -83,6 +90,10 @@ async function createPlaylistHandler(req, res) {
     playlistName = `Top ${charts[chart]} Tracks ${date}`;
   }
   const createdPlaylist = await createPlaylist(uriArray, playlistName, token);
+  logger.info(
+    { playlistId: createdPlaylist.id, playlistName },
+    "Spotify playlist created"
+  );
 
   return res.json({ playlist: createdPlaylist, failedArray: failedArray });
 }
