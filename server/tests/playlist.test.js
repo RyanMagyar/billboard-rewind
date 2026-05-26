@@ -59,10 +59,11 @@ describe("POST /playlist/createPlaylist", () => {
       { chart: "", date: "" },
     ];
 
-    for (const query of queries) {
+    for (const [index, query] of queries.entries()) {
       const response = await request(app)
         .post("/playlist/createPlaylist")
-        .query(query);
+        .query(query)
+        .set("X-Forwarded-For", `198.51.100.${index + 1}`);
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty(
@@ -79,10 +80,11 @@ describe("POST /playlist/createPlaylist", () => {
       { chart: "Rock", date: "10-1-2012" },
       { chart: "Rock", date: "2012-10-10" },
     ];
-    for (const query of queries) {
+    for (const [index, query] of queries.entries()) {
       const response = await request(app)
         .post("/playlist/createPlaylist")
-        .query(query);
+        .query(query)
+        .set("X-Forwarded-For", `198.51.100.${index + 10}`);
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty("message", "Improper date format.");
