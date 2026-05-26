@@ -1,6 +1,6 @@
 # End User Agreement (Terms of Service)
 
-**Last Updated: April 4, 2025**
+**Last Updated: May 26, 2026**
 
 Welcome to Playlist Rewind! By using our service, you agree to comply with the following terms. If you do not agree, please do not use our service.
 
@@ -18,6 +18,7 @@ Our app scrapes publicly available Billboard charts and matches songs to Spotify
 - You must have a valid Spotify account to use Playlist Rewind.
 - You agree to use this service only for personal, non-commercial purposes.
 - You will not misuse the service, attempt to reverse-engineer it, or exploit it in a way that violates Spotify’s terms of service or copyright laws.
+- You will not attempt to bypass, probe, or abuse application security controls, including rate limits or authentication/session protections.
 - You acknowledge that playlist accuracy may vary depending on song availability on Spotify.
 
 ---
